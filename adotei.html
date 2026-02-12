@@ -1,0 +1,187 @@
+index.html
+<main class="catalog-container">
+    <aside class="filters">
+        <h2>Filtros</h2>
+        <form>
+            <label for="especie">Espécie</label>
+            <select id="especie">
+                <option value="cao">Cão</option>
+                <option value="gato">Gato</option>
+            </select>
+            
+            <label for="porte">Porte</label>
+            <input type="checkbox" name="porte" value="p"> Pequeno
+            <button type="reset">Limpar Filtros</button>
+            <button type="submit">Filtrar</button>
+        </form>
+    </aside>
+
+    <section class="animal-grid">
+        <article class="animal-card">
+            <span class="badge unverified">Não Verificado</span> <img src="placeholder-animal.jpg" alt="Foto do animal">
+            <div class="card-content">
+                <h3>Nome do Pet</h3>
+                <p>Porte: Médio | Idade: 2 anos</p>
+                <p>Localização: São Paulo - SP</p>
+                <a href="detalhes.html" class="btn">Ver Detalhes</a>
+            </div>
+        </article>
+    </section>
+</main>
+<section class="adoption-form">
+    <h1>Intenção de Adoção</h1>
+    <p>Você está interessado em: <strong>Nome do Animal</strong></p>
+
+    <form action="/enviar-solicitacao" method="POST">
+        <fieldset>
+            <legend>Seus Dados</legend>
+            <label for="nome">Nome Completo:*</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="email">E-mail:*</label>
+            <input type="email" id="email" name="email" required>
+        </fieldset>
+
+        <fieldset>
+            <legend>Sobre a Adoção</legend>
+            <label for="motivacao">O que te motiva a adotar?*</label>
+            <textarea id="motivacao" name="motivacao" required placeholder="Conte um pouco sobre sua rotina e casa..."></textarea>
+        </fieldset>
+
+        <div class="actions">
+            <button type="submit" class="btn-primary">Enviar Intenção</button>
+        </div>
+    </form>
+</section>
+<main class="dashboard">
+    <h1>Painel de Controle</h1>
+
+    <section class="priority-section">
+        <h2>Ações Pendentes (Prioridade 1)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Animal</th>
+                    <th>Solicitante</th>
+                    <th>Data</th>
+                    <th>Status Atual</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rex (Cão)</td>
+                    <td>João Silva</td>
+                    <td>10/02/2026</td>
+                    <td><span class="status-tag pendente">Pendente</span></td>
+                    <td>
+                        <select name="status-update">
+                            <option value="analise">Em Análise</option>
+                            <option value="aprovado">Aprovar</option>
+                            <option value="rejeitado">Rejeitar</option>
+                            <option value="concluido">Concluído (Adotado)</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+<header>
+    <div class="logo">
+        <h1>AdotaPet</h1>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Início</a></li>
+            <li><a href="catalogo.html">Adotar</a></li>
+            <li><a href="cadastrar-animal.html">Cadastrar Animal</a></li>
+            <li><a href="painel.html">Painel do Protetor</a></li>
+            <li><a href="login.html" class="btn-login">Sair</a></li>
+        </ul>
+    </nav>
+</header>
+<main class="container-busca">
+    <aside class="filtros-sidebar">
+        <h3>Filtrar Busca</h3>
+        <form action="/buscar" method="GET">
+            <label for="busca">Palavra-chave</label>
+            <input type="search" id="busca" name="q" placeholder="Ex: Husky, dócil...">
+
+            <label for="especie">Espécie</label>
+            <select id="especie" name="especie">
+                <option value="">Todas</option>
+                <option value="cachorro">Cachorro</option>
+                <option value="gato">Gato</option>
+                <option value="outros">Híbrido/Outros</option>
+            </select>
+
+            <label for="localizacao">Cidade/Estado</label>
+            <input type="text" id="localizacao" name="localizacao" list="cidades-sugeridas" placeholder="Digite a cidade">
+            <datalist id="cidades-sugeridas">
+                <option value="São Paulo, SP">
+                <option value="Rio de Janeiro, RJ">
+                <option value="Curitiba, PR">
+            </datalist>
+
+            <button type="submit" class="btn-filtrar">Aplicar Filtros</button>
+            <button type="reset" class="btn-limpar">Limpar Tudo</button>
+        </form>
+    </aside>
+</main>
+<section id="cadastro-animal">
+    <h2>Cadastrar Novo Animal</h2>
+    <form action="/api/animais" method="POST" enctype="multipart/form-data">
+        
+        <label for="foto">Foto do Animal (Obrigatório):</label>
+        <input type="file" id="foto" name="foto" accept="image/*" required>
+
+        <div class="form-group">
+            <label for="especie">Espécie:*</label>
+            <input type="text" id="especie" name="especie" required placeholder="Ex: Cão Híbrido">
+        </div>
+
+        <div class="form-row">
+            <label>Porte:*</label>
+            <label><input type="radio" name="porte" value="pequeno" required> Pequeno</label>
+            <label><input type="radio" name="porte" value="medio"> Médio</label>
+            <label><input type="radio" name="porte" value="grande"> Grande</label>
+        </div>
+
+        <label for="idade">Idade Estimada (em anos):</label>
+        <input type="number" id="idade" name="idade" min="0" max="30" step="1">
+
+        <label for="descricao">Descrição e História:</label>
+        <textarea id="descricao" name="descricao" rows="5" required placeholder="Conte sobre o temperamento do animal..."></textarea>
+
+        <button type="submit" class="btn-cadastrar">Publicar Anúncio</button>
+    </form>
+</section>
+<section class="painel-gestao">
+    <h2>Solicitações de Adoção</h2>
+    <table class="tabela-funil">
+        <thead>
+            <tr>
+                <th>Animal</th>
+                <th>Interessado</th>
+                <th>Status</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Thor</strong> (Cão)</td>
+                <td>
+                    <details>
+                        <summary>Marcos Oliveira</summary>
+                        <p>E-mail: marcos@email.com</p>
+                        <p>Telefone: (11) 99999-9999</p> </details>
+                </td>
+                <td><span class="status analise">Em Análise</span></td>
+                <td>
+                    <button class="btn-status">Mudar Status</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
