@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscrição - 1º Hackathon de Informática</title>
+</head>
+<body>
+
+    <h1>Inscrição: 1º Hackathon de Informática da Escola</h1>
+    <p>Preencha os campos abaixo para garantir sua vaga no evento.</p>
+
+    <form action="#" method="POST" enctype="multipart/form-data">
+
+        <fieldset>
+            <legend>Dados Pessoais</legend>
+            
+            <p>
+                <label for="nome">Nome Completo:</label><br>
+                <input type="text" id="nome" name="nome" required>
+            </p>
+
+            <p>
+                <label for="email">E-mail:</label><br>
+                <input type="email" id="email" name="email" required>
+            </p>
+
+            <p>
+                <label for="senha">Senha para o sistema:</label><br>
+                <input type="password" id="senha" name="senha" required>
+            </p>
+
+            <p>
+                <label for="nascimento">Data de Nascimento:</label><br>
+                <input type="date" id="nascimento" name="nascimento" required>
+            </p>
+        </fieldset>
+
+        <br>
+
+        <fieldset>
+            <legend>Perfil Técnico</legend>
+
+            <p>Quais linguagens você tem interesse?</p>
+            <input type="checkbox" id="html" name="interesse" value="html">
+            <label for="html">HTML</label><br>
+            
+            <input type="checkbox" id="css" name="interesse" value="css">
+            <label for="css">CSS</label><br>
+            
+            <input type="checkbox" id="js" name="interesse" value="javascript">
+            <label for="js">JavaScript</label><br>
+            
+            <input type="checkbox" id="python" name="interesse" value="python">
+            <label for="python">Python</label>
+
+            <p>Nível de experiência:</p>
+            <input type="radio" id="iniciante" name="nivel" value="iniciante" checked>
+            <label for="iniciante">Iniciante</label><br>
+            
+            <input type="radio" id="intermediario" name="nivel" value="intermediario">
+            <label for="intermediario">Intermediário</label><br>
+            
+            <input type="radio" id="avancado" name="nivel" value="avancado">
+            <label for="avancado">Avançado</label>
+
+            <p>
+                <label for="curriculo">Anexe seu currículo ou portfólio:</label><br>
+                <input type="file" id="curriculo" name="curriculo">
+            </p>
+        </fieldset>
+
+        <br>
+
+        <fieldset>
+            <legend>Detalhes do Evento</legend>
+
+            <p>
+                <label for="camiseta">Tamanho da camiseta:</label><br>
+                <select id="camiseta" name="camiseta">
+                    <option value="p">P</option>
+                    <option value="m">M</option>
+                    <option value="g">G</option>
+                    <option value="gg">GG</option>
+                </select>
+            </p>
+
+            <p>
+                <label for="motivacao">Carta de Motivação (Por que você deseja participar?):</label><br>
+                <textarea id="motivacao" name="motivacao" rows="5" cols="40" placeholder="Conte-nos um pouco sobre suas expectativas..."></textarea>
+            </p>
+        </fieldset>
+
+        <br>
+
+        <button type="submit">Enviar Inscrição</button>
+
+    </form>
+
+</body>
+</html>
