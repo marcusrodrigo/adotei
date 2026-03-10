@@ -1,195 +1,235 @@
-<head>
-    <link rel="stylesheet" href="style.css">
-</head>
-<main class="catalog-container">
-    <aside class="filters">
-        <h2>Filtros</h2>
-        <form>
-            <label for="especie">Espécie</label>
-            <select id="especie">
-                <option value="cao">Cão</option>
-                <option value="gato">Gato</option>
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Meu Site</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdotaPet - Responsivo</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-            </select>
+    <style>
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: #6c5ce7;
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header ul {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: 400;
+        }
+
+        /* --- LAYOUT PRINCIPAL (DESKTOP) --- */
+        .container {
+            display: flex;
+            padding: 20px 5%;
+            gap: 20px;
+        }
+
+        .sidebar {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            height: fit-content;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+        }
+
+        .sidebar label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .sidebar input, .sidebar select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .animal-grid {
+            flex: 3;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* --- CARDS --- */
+        .animal-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff7675;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .animal-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            margin-top: 10px;
+            color: #6c5ce7;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #6c5ce7;
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        /* --- MEDIA QUERIES (A MÁGICA DA RESPONSIVIDADE) --- */
+
+        /* CELULAR (Até 768px) */
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column; 
+            }
+
+            header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem;
+            }
+
+            header ul {
+                margin-top: 15px;
+                font-size: 14px;
+            }
+
+            .animal-grid {
+                grid-template-columns: 1fr; 
+            }
+        }
+
+        /* TABLET (Entre 769px e 1024px) */
+        @media screen and (min-width: 769px) and (max-width: 1024px) {
+            .animal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <h1>🐾 AdotaPet</h1>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="#">Início</a></li>
+            <li><a href="#">Adotar</a></li>
+            <li><a href="#">Login</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <aside class="sidebar">
+        <h3>Filtrar Busca</h3>
+        <form>
+            <label for="busca">Palavra-chave</label>
+            <input type="search" id="busca" placeholder="Ex: Husky, dócil...">
             
-            <label for="porte">Porte</label>
-            <input type="checkbox" name="porte" value="p"> Pequeno
-            <button type="reset">Limpar Filtros</button>
-            <button type="submit">Filtrar</button>
+            <label for="especie">Espécie</label>
+            <select id="especie">
+                <option value="">Todas</option>
+                <option value="cao">Cão</option>
+                <option value="gato">Gato</option>
+            </select>
+
+            <button type="submit" class="btn-primary">Aplicar Filtros</button>
         </form>
     </aside>
 
     <section class="animal-grid">
         <article class="animal-card">
-            <span class="badge unverified">Não Verificado</span> <img src="placeholder-animal.jpg" alt="Foto do animal">
+            <div class="badge">Novo</div>
+            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=300&q=80" alt="Foto do animal">
             <div class="card-content">
-                <h3>Nome do Pet</h3>
+                <h3>Rex (Cão)</h3>
                 <p>Porte: Médio | Idade: 2 anos</p>
-                <p>Localização: São Paulo - SP</p>
-                <a href="detalhes.html" class="btn">Ver Detalhes</a>
+                <p>📍 São Paulo - SP</p>
+                <a href="#" class="btn-secondary">Ver Detalhes</a>
+            </div>
+        </article>
+
+        <article class="animal-card">
+            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=300&q=80" alt="Foto do gato">
+            <div class="card-content">
+                <h3>Mimi (Gata)</h3>
+                <p>Porte: Pequeno | Idade: 1 ano</p>
+                <p>📍 Rio de Janeiro - RJ</p>
+                <a href="#" class="btn-secondary">Ver Detalhes</a>
             </div>
         </article>
     </section>
 </main>
-<section class="adoption-form">
-    <h1>Intenção de Adoção</h1>
-    <p>Você está interessado em: <strong>Nome do Animal</strong></p>
 
-    <form action="/enviar-solicitacao" method="POST">
-        <fieldset>
-            <legend>Seus Dados</legend>
-            <label for="nome">Nome Completo:*</label>
-            <input type="text" id="nome" name="nome" required>
-
-            <label for="email">E-mail:*</label>
-            <input type="email" id="email" name="email" required>
-        </fieldset>
-
-        <fieldset>
-            <legend>Sobre a Adoção</legend>
-            <label for="motivacao">O que te motiva a adotar?*</label>
-            <textarea id="motivacao" name="motivacao" required placeholder="Conte um pouco sobre sua rotina e casa..."></textarea>
-        </fieldset>
-
-        <div class="actions">
-            <button type="submit" class="btn-primary">Enviar Intenção</button>
-        </div>
-    </form>
-</section>
-<main class="dashboard">
-    <h1>Painel de Controle</h1>
-
-    <section class="priority-section">
-        <h2>Ações Pendentes (Prioridade 1)</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Animal</th>
-                    <th>Solicitante</th>
-                    <th>Data</th>
-                    <th>Status Atual</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Rex (Cão)</td>
-                    <td>João Silva</td>
-                    <td>10/02/2026</td>
-                    <td><span class="status-tag pendente">Pendente</span></td>
-                    <td>
-                        <select name="status-update">
-                            <option value="analise">Em Análise</option>
-                            <option value="aprovado">Aprovar</option>
-                            <option value="rejeitado">Rejeitar</option>
-                            <option value="concluido">Concluído (Adotado)</option>
-                        </select>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-</main>
-<header>
-    <div class="logo">
-        <h1>AdotaPet</h1>
-    </div>
-    <nav>
-        <ul>
-            <li><a href="index.html">Início</a></li>
-            <li><a href="catalogo.html">Adotar</a></li>
-            <li><a href="cadastrar-animal.html">Cadastrar Animal</a></li>
-            <li><a href="painel.html">Painel do Protetor</a></li>
-            <li><a href="login.html" class="btn-login">Sair</a></li>
-        </ul>
-    </nav>
-</header>
-<main class="container-busca">
-    <aside class="filtros-sidebar">
-        <h3>Filtrar Busca</h3>
-        <form action="/buscar" method="GET">
-            <label for="busca">Palavra-chave</label>
-            <input type="search" id="busca" name="q" placeholder="Ex: Husky, dócil...">
-
-            <label for="especie">Espécie</label>
-            <select id="especie" name="especie">
-                <option value="">Todas</option>
-                <option value="cachorro">Cachorro</option>
-                <option value="gato">Gato</option>
-                <option value="outros">Híbrido/Outros</option>
-            </select>
-
-            <label for="localizacao">Cidade/Estado</label>
-            <input type="text" id="localizacao" name="localizacao" list="cidades-sugeridas" placeholder="Digite a cidade">
-            <datalist id="cidades-sugeridas">
-                <option value="São Paulo, SP">
-                <option value="Rio de Janeiro, RJ">
-                <option value="Curitiba, PR">
-            </datalist>
-
-            <button type="submit" class="btn-filtrar">Aplicar Filtros</button>
-            <button type="reset" class="btn-limpar">Limpar Tudo</button>
-        </form>
-    </aside>
-</main>
-<section id="cadastro-animal">
-    <h2>Cadastrar Novo Animal</h2>
-    <form action="/api/animais" method="POST" enctype="multipart/form-data">
-        
-        <label for="foto">Foto do Animal (Obrigatório):</label>
-        <input type="file" id="foto" name="foto" accept="image/*" required>
-
-        <div class="form-group">
-            <label for="especie">Espécie:*</label>
-            <input type="text" id="especie" name="especie" required placeholder="Ex: Cão Híbrido">
-        </div>
-
-        <div class="form-row">
-            <label>Porte:*</label>
-            <label><input type="radio" name="porte" value="pequeno" required> Pequeno</label>
-            <label><input type="radio" name="porte" value="medio"> Médio</label>
-            <label><input type="radio" name="porte" value="grande"> Grande</label>
-        </div>
-
-        <label for="idade">Idade Estimada (em anos):</label>
-        <input type="number" id="idade" name="idade" min="0" max="30" step="1">
-
-        <label for="descricao">Descrição e História:</label>
-        <textarea id="descricao" name="descricao" rows="5" required placeholder="Conte sobre o temperamento do animal..."></textarea>
-
-        <button type="submit" class="btn-cadastrar">Publicar Anúncio</button>
-    </form>
-</section>
-<section class="painel-gestao">
-    <h2>Solicitações de Adoção</h2>
-    <table class="tabela-funil">
-        <thead>
-            <tr>
-                <th>Animal</th>
-                <th>Interessado</th>
-                <th>Status</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Thor</strong> (Cão)</td>
-                <td>
-                    <details>
-                        <summary>Marcos Oliveira</summary>
-                        <p>E-mail: marcos@email.com</p>
-                        <p>Telefone: (11) 99999-9999</p> </details>
-                </td>
-                <td><span class="status analise">Em Análise</span></td>
-                <td>
-                    <button class="btn-status">Mudar Status</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
+</body>
+</html>
