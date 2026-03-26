@@ -3,300 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdotaPet - Responsivo</title>
+    <title>AdotaPet - Sistema Completo</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* --- VARIÁVEIS TECH (Facilitam mudanças de cor) --- */
-:root {
-    --primary: #6c5ce7;
-    --primary-light: #a29bfe;
-    --accent: #ff7675;
-    --glass-bg: rgba(255, 255, 255, 0.75);
-    --card-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
-    --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
+        /* --- 1. VARIÁVEIS TECH --- */
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --accent: #ff7675;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --card-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
+            --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
 
-/* --- CONFIGURAÇÕES GERAIS --- */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+        /* --- 2. CONFIGURAÇÕES GERAIS --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    /* Background mais suave e moderno */
-    background: radial-gradient(circle at top right, #fdfbfb 0%, #ebedee 100%);
-    color: #2d3436;
-    line-height: 1.6;
-    min-height: 100vh;
-}
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top right, #fdfbfb 0%, #ebedee 100%);
+            color: #2d3436;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
 
-/* --- HEADER "FLOATING" TECH --- */
-header {
-    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
-    color: white;
-    /* Header flutuante para parecer um app moderno */
-    margin: 15px 5%;
-    padding: 1rem 2.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 8px 32px rgba(108, 92, 231, 0.2);
-    border-radius: 20px;
-    position: sticky;
-    top: 15px;
-    z-index: 1000;
-    backdrop-filter: blur(8px);
-}
+        /* --- 3. HEADER FLOATING --- */
+        header {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            margin: 15px 5%;
+            padding: 1rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(108, 92, 231, 0.2);
+            border-radius: 20px;
+            position: sticky;
+            top: 15px;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
 
-header h1 {
-    font-size: 1.4rem;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-}
+        header h1 { font-size: 1.4rem; font-weight: 600; }
+        header ul { display: flex; list-style: none; gap: 25px; }
+        header a { color: white; text-decoration: none; font-size: 0.95rem; transition: var(--transition-smooth); display: inline-block; }
+        header a:hover { opacity: 0.8; }
+        header a:active { transform: scale(0.9); filter: brightness(1.2); }
 
-header ul {
-    display: flex;
-    list-style: none;
-    gap: 25px;
-}
+        /* --- 4. LAYOUT PRINCIPAL --- */
+        .container {
+            display: flex;
+            padding: 40px 5%;
+            gap: 30px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
 
-header a {
-    color: white;
-    text-decoration: none;
-    font-weight: 400;
-    font-size: 0.95rem;
-    position: relative;
-    transition: var(--transition-smooth);
-}
+        /* --- 5. SIDEBAR GLASSMORPHISM --- */
+        .sidebar {
+            flex: 1;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 24px;
+            height: fit-content;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
 
-/* Efeito de linha embaixo do menu */
-header a::after {
-    content: '';
-    position: absolute;
-    width: 0; height: 2px;
-    bottom: -5px; left: 0;
-    background: white;
-    transition: 0.3s;
-}
+        .sidebar h3 { margin-bottom: 20px; color: var(--primary); font-size: 1.1rem; }
+        .sidebar label { font-size: 0.8rem; font-weight: 600; color: #636e72; display: block; margin-top: 10px; }
 
-header a:hover::after {
-    width: 100%;
-}
+        .sidebar input, .sidebar select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 2px solid rgba(108, 92, 231, 0.1);
+            border-radius: 12px;
+            outline: none;
+            font-family: inherit;
+        }
 
-/* --- LAYOUT PRINCIPAL --- */
-.container {
-    display: flex;
-    padding: 40px 5%;
-    gap: 30px;
-    max-width: 1300px;
-    margin: 0 auto;
-}
+        /* --- 6. GRID E CARDS --- */
+        .animal-grid {
+            flex: 3;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
 
-/* --- SIDEBAR GLASSMORPHISM --- */
-.sidebar {
-    flex: 1;
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 30px;
-    border-radius: 24px;
-    height: fit-content;
-    box-shadow: var(--card-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
+        .animal-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: var(--transition-smooth);
+            position: relative;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .animal-card:hover { transform: translateY(-10px); }
 
-.sidebar h3 {
-    margin-bottom: 25px;
-    color: var(--primary);
-    font-weight: 600;
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.sidebar input, .sidebar select {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 18px;
-    border: 2px solid rgba(108, 92, 231, 0.1);
-    border-radius: 15px;
-    background: white;
-    transition: all 0.3s;
-    outline: none;
-    font-family: inherit;
-}
+        .animal-card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-content { padding: 25px; }
+        .card-content h3 { font-size: 1.2rem; margin-bottom: 8px; color: var(--primary); }
 
-.sidebar input:focus {
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 4px rgba(162, 155, 254, 0.2);
-}
+        .badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 10;
+        }
 
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 14px;
-    width: 100%;
-    border-radius: 15px;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
-    transition: var(--transition-smooth);
-}
+        /* --- 7. BOTÕES --- */
+        .btn-primary, .btn-secondary {
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+        }
 
-.btn-primary:hover {
-    background: #5b4bc4;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
-}
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
 
-/* --- GRID E CARDS AVANÇADOS --- */
-.animal-grid {
-    flex: 3;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
-}
+        .btn-primary:active, .btn-secondary:active { transform: scale(0.95); filter: contrast(1.2); }
 
-.animal-card {
-    background: white;
-    border-radius: 28px;
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    border: 1px solid rgba(0,0,0,0.02);
-    transition: var(--transition-smooth);
-}
+        .btn-secondary {
+            background: #f8f9ff;
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+            margin-top: 15px;
+        }
 
-.animal-card:hover {
-    transform: translateY(-12px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
+        /* --- 8. FEEDBACK VISUAL --- */
+        .secao-foco {
+            animation: flashHighlight 1.5s ease-out;
+            border-radius: 24px;
+        }
 
-.badge {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: var(--accent);
-    padding: 5px 14px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
+        @keyframes flashHighlight {
+            0% { background-color: rgba(108, 92, 231, 0.2); box-shadow: 0 0 20px var(--primary-light); }
+            100% { background-color: transparent; box-shadow: none; }
+        }
 
-.animal-card img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    transition: 0.6s ease;
-}
+        /* --- 9. MODAL --- */
+        #modal-pet {
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+            background:rgba(0,0,0,0.6); z-index:2000; align-items:center; 
+            justify-content:center; backdrop-filter: blur(5px);
+        }
 
-.animal-card:hover img {
-    transform: scale(1.08);
-}
-
-.card-content {
-    padding: 25px;
-}
-
-.card-content h3 {
-    font-size: 1.25rem;
-    margin-bottom: 10px;
-}
-
-.btn-secondary {
-    display: block;
-    margin-top: 20px;
-    color: var(--primary);
-    background: #f8f9ff;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 12px;
-    border-radius: 16px;
-    border: 2px solid transparent;
-    transition: var(--transition-smooth);
-}
-
-.btn-secondary:hover {
-    background: white;
-    border-color: var(--primary);
-    transform: scale(1.02);
-}
-
-/* --- MEDIA QUERIES --- */
-@media screen and (max-width: 768px) {
-    header { margin: 0; border-radius: 0; width: 100%; top: 0; }
-    .container { flex-direction: column; padding: 20px; }
-    .sidebar { order: 2; }
-    .animal-grid { order: 1; }
-}
+        @media screen and (max-width: 768px) {
+            header { margin: 0; border-radius: 0; width: 100%; top: 0; }
+            .container { flex-direction: column; padding: 20px; }
+        }
     </style>
 </head>
 <body>
 
-<header>
+<header id="inicio">
     <div class="logo">
         <h1>🐾 AdotaPet</h1>
     </div>
     <nav>
         <ul>
-            <li><a href="#">Início</a></li>
-            <li><a href="#">Adotar</a></li>
-            <li><a href="#">Login</a></li>
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#adotar-ancora">Adotar</a></li>
+            <li><a href="#" onclick="alert('Área de Login em desenvolvimento!')">Login</a></li>
         </ul>
     </nav>
 </header>
 
 <main class="container">
     <aside class="sidebar">
-        <h3>Filtrar Busca</h3>
-        <form>
-            <label for="busca">Palavra-chave</label>
-            <input type="search" id="busca" placeholder="Ex: Husky, dócil...">
+        <h3>Cadastrar Pet</h3>
+        <form id="meuFormulario">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" placeholder="Ex: Tobias" required>
             
-            <label for="especie">Espécie</label>
-            <select id="especie">
-                <option value="">Todas</option>
-                <option value="cao">Cão</option>
-                <option value="gato">Gato</option>
+            <label for="categoria">Espécie</label>
+            <select id="categoria" required>
+                <option value="Cão">Cão</option>
+                <option value="Gato">Gato</option>
             </select>
 
-            <button type="submit" class="btn-primary">Aplicar Filtros</button>
+            <label for="data">Data de Resgate/Nascimento</label>
+            <input type="date" id="data" required>
+
+            <button type="submit" class="btn-primary">Salvar no Banco</button>
+        </form>
+
+        <hr style="margin: 25px 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+
+        <h3 id="adotar-ancora">Filtrar Busca</h3>
+        <form id="formBusca" onsubmit="event.preventDefault();">
+            <label for="inputBusca">Nome do Pet</label>
+            <input type="search" id="inputBusca" placeholder="Ex: Rex, Mimi...">
+
+            <label for="filtroEspecie">Espécie</label>
+            <select id="filtroEspecie">
+                <option value="Todos">Todos</option>
+                <option value="Cão">Cão</option>
+                <option value="Gato">Gato</option>
+            </select>
+            
+            <button type="button" class="btn-secondary" onclick="resetarFiltros()">Limpar Filtros</button>
         </form>
     </aside>
-<div id="mensagem-vazia" style="display: none; text-align: center; padding: 20px; grid-column: 1 / -1;">
-    <p style="font-size: 1.2rem; color: #636e72;">🐾 Ops! Nenhum amiguinho encontrado com esses filtros.</p>
-</div>
-    <section class="animal-grid">
-        <article class="animal-card">
-            <div class="badge">Novo</div>
-            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80" alt="Foto do animal">
-            <div class="card-content">
-                <h3>Rex (Cão)</h3>
-                <p><strong>Porte:</strong> Médio | <strong>Idade:</strong> 2 anos</p>
-                <p>📍 São Paulo - SP</p>
-                <a href="#" class="btn-secondary">Ver Detalhes</a>
-            </div>
-        </article>
 
-        <article class="animal-card">
-            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80" alt="Foto do gato">
-            <div class="card-content">
-                <h3>Mimi (Gata)</h3>
-                <p><strong>Porte:</strong> Pequeno | <strong>Idade:</strong> 1 ano</p>
-                <p>📍 Rio de Janeiro - RJ</p>
-                <a href="#" class="btn-secondary">Ver Detalhes</a>
-            </div>
-        </article>
-    </section>
+    <section class="animal-grid" id="listaItens">
+        </section>
 </main>
-<script src="script.js"></script>
-<div id="modal-pet" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
-    <div style="background:white; padding:40px; border-radius:24px; max-width:400px; width:90%; text-align:center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+
+<div id="modal-pet">
+    <div style="background:white; padding:40px; border-radius:24px; max-width:400px; width:90%; text-align:center;">
         <div id="modal-conteudo"></div>
-        <button onclick="document.getElementById('modal-pet').style.display='none'" class="btn-primary" style="margin-top:20px;">Fechar</button>
+        <button onclick="document.getElementById('modal-pet').style.display='none'" class="btn-primary">Fechar</button>
     </div>
 </div>
+
+<script src="db.js"></script>
+<script src="controller.js"></script>
+
 </body>
 </html>
