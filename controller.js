@@ -1,5 +1,5 @@
 /**
- * CONTROLLER.JS - Versão Final Unificada
+ * CONTROLLER.JS - Versão Final Unificada com UX do Caos
  */
 
 // --- 1. SELETORES ---
@@ -7,6 +7,33 @@ const listaGrid = document.querySelector('#listaItens');
 const formulario = document.querySelector('#meuFormulario');
 const inputBusca = document.querySelector('#inputBusca');
 const filtroEspecie = document.querySelector('#filtroEspecie');
+
+// Seletores do Caos
+const btnCaos = document.querySelector('#btn-caos');
+const displayAno = document.querySelector('#display-ano');
+const inputDataOculto = document.querySelector('#data');
+const areaCaos = document.querySelector('#caos-area');
+
+let anoAtual = 1900;
+
+// --- LÓGICA DO CAOS: O BOTÃO FUJÃO ---
+btnCaos.addEventListener('mouseover', () => {
+    const maxX = areaCaos.clientWidth - btnCaos.offsetWidth;
+    const maxY = areaCaos.clientHeight - btnCaos.offsetHeight;
+    
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+    
+    btnCaos.style.left = `${newX}px`;
+    btnCaos.style.top = `${newY}px`;
+});
+
+btnCaos.addEventListener('click', () => {
+    anoAtual++;
+    if(anoAtual > 2026) anoAtual = 1900; // Reseta se passar do limite
+    displayAno.innerText = anoAtual;
+    inputDataOculto.value = `${anoAtual}-01-01`; // Atualiza o valor para o banco
+});
 
 // --- 2. DADOS ORIGINAIS ---
 const petsOriginais = [
@@ -104,7 +131,13 @@ formulario.addEventListener('submit', async (e) => {
         idade: 'N/A'
     };
     await adicionarItem(novoPet);
+    
+    // Reseta o formulário e o Caos
     formulario.reset();
+    anoAtual = 1900;
+    displayAno.innerText = "1900";
+    inputDataOculto.value = "1900-01-01";
+    
     atualizarLista();
 });
 

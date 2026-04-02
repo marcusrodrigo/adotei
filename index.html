@@ -180,6 +180,29 @@
             justify-content:center; backdrop-filter: blur(5px);
         }
 
+        /* --- 10. ESTILO CAOS (NOVO) --- */
+        .caos-container {
+            background: #eee;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+        }
+        #btn-caos {
+            position: absolute;
+            width: auto;
+            padding: 5px 10px;
+            font-size: 12px;
+            background: var(--accent);
+            color: white;
+            border-radius: 5px;
+            cursor: crosshair;
+            transition: 0.1s;
+        }
+
         @media screen and (max-width: 768px) {
             header { margin: 0; border-radius: 0; width: 100%; top: 0; }
             .container { flex-direction: column; padding: 20px; }
@@ -214,8 +237,12 @@
                 <option value="Gato">Gato</option>
             </select>
 
-            <label for="data">Data de Resgate/Nascimento</label>
-            <input type="date" id="data" required>
+            <label>Data de Nascimento (Clique para aumentar o ano)</label>
+            <div class="caos-container" id="caos-area">
+                <p style="font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;" id="display-ano">1900</p>
+                <button type="button" id="btn-caos">CLIQUE AQUI</button>
+            </div>
+            <input type="hidden" id="data" value="1900-01-01">
 
             <button type="submit" class="btn-primary">Salvar no Banco</button>
         </form>
