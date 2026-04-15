@@ -19,11 +19,11 @@ btnDark.addEventListener('click', () => {
 const petsFicticios = [
     { 
         id: 'f1', nome: 'Rex', categoria: 'Cão', data: '2024-03-10', 
-        foto: 'https://static.wixstatic.com/media/746960_8163f91242334816912384a51e621217~mv2.jpg', mensagem: "" 
+        foto: 'img/rex.jpg', mensagem: "" 
     },
     { 
         id: 'f2', nome: 'Mimi', categoria: 'Gato', data: '2024-04-15', 
-        foto: 'https://adimax.com.br/wp-content/uploads/2020/06/Gato-filhote.jpg', mensagem: ""
+        foto: 'img/mimi.jpg', mensagem: ""
     }
 ];
 
