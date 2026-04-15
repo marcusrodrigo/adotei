@@ -1,156 +1,146 @@
 /**
- * CONTROLLER.JS - LOGICA COMPLETA
- * Gerencia a renderização, filtros, upload de imagem e data automática.
+ * CONTROLLER.JS - VERSÃO COMPLETA E INTEGRADA
  */
 
+// --- BANCO DE DADOS LOCAL (LocalStorage) ---
+const buscarItens = () => JSON.parse(localStorage.getItem('adota_pet_master_db')) || [];
+
+const adicionarItem = (pet) => {
+    const pets = buscarItens();
+    pet.id = Date.now(); // ID numérico para permitir exclusão
+    pets.push(pet);
+    localStorage.setItem('adota_pet_master_db', JSON.stringify(pets));
+};
+
+const deletarItem = (id) => {
+    const pets = buscarItens().filter(p => p.id !== id);
+    localStorage.setItem('adota_pet_master_db', JSON.stringify(pets));
+};
+
+// --- SELETORES ---
 const listaGrid = document.querySelector('#listaItens');
 const formulario = document.querySelector('#meuFormulario');
 const inputBusca = document.querySelector('#inputBusca');
 const filtroEspecie = document.querySelector('#filtroEspecie');
 
-// --- CONTROLE DARK MODE ---
-const btnDark = document.getElementById('btn-dark-toggle');
-btnDark.addEventListener('click', () => {
+// --- DARK MODE ---
+document.getElementById('btn-dark-toggle').addEventListener('click', () => {
     document.body.classList.toggle('dark-theme');
-    btnDark.innerText = document.body.classList.contains('dark-theme') ? '☀️ Light Mode' : '🌙 Dark Mode';
 });
 
-// --- DADOS ORIGINAIS CORRIGIDOS ---
+// --- REX E MIMI (DADOS FIXOS) ---
 const petsFicticios = [
-    { 
-        id: 'f1', nome: 'Rex', categoria: 'Cão', data: '2024-03-10', 
-        foto: 'IMG_2004.jpg', mensagem: "" 
+    {
+        id: 'fixo_1', nome: 'Rex', categoria: 'Cão', data: '10/03/2024',
+        descricao: 'Golden Retriever dócil, vacinado e muito companheiro.',
+        foto: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80'
     },
-    { 
-        id: 'f2', nome: 'Mimi', categoria: 'Gato', data: '2024-04-15', 
-        foto: 'IMG_2008.jpg', mensagem: ""
+    {
+        id: 'fixo_2', nome: 'Mimi', categoria: 'Gato', data: '05/04/2024',
+        descricao: 'Gatinha calma que adora um colo e é muito limpinha.',
+        foto: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80'
     }
 ];
 
 // --- FUNÇÃO DE RENDERIZAÇÃO ---
-async function atualizarLista() {
-    try {
-        const itensDB = await buscarItens(); // Função vinda do db.js
-        const todosOsPets = [...petsFicticios, ...itensDB];
-        
-        const busca = inputBusca.value.toLowerCase();
-        const especie = filtroEspecie.value;
+function atualizarLista() {
+    const salvosNoBanco = buscarItens();
+    const todosOsAnimais = [...petsFicticios, ...salvosNoBanco];
 
-        listaGrid.innerHTML = '';
+    const termoPesquisa = inputBusca.value.toLowerCase();
+    const especieSelecionada = filtroEspecie.value;
 
-        const filtrados = todosOsPets.filter(pet => {
-            const matchNome = pet.nome.toLowerCase().includes(busca);
-            const matchEspecie = (especie === "Todos") || (pet.categoria === especie);
-            return matchNome && matchEspecie;
-        });
+    listaGrid.innerHTML = '';
 
-        // Caso a busca esteja vazia
-        if (filtrados.length === 0) {
-            listaGrid.innerHTML = `
-                <div class="empty-results">
-                    <h2>🐾 Ninguém <br>Por Aqui <br>Ainda.</h2>
-                    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Zic3B0Ynl0NXh4Ym4yc3R4M3V4M3V4M3V4M3V4M3V4M3V4M3V4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZContext&rid=giphy.gif" alt="Nada encontrado">
-                </div>`;
-            return;
-        }
+    // Filtragem
+    const resultadoFiltrado = todosOsAnimais.filter(pet => {
+        const condicaoEspecie = (especieSelecionada === "Todos" || pet.categoria === especieSelecionada);
+        const condicaoNome = pet.nome.toLowerCase().includes(termoPesquisa);
+        return condicaoEspecie && condicaoNome;
+    });
 
-        // Criar os Cards
-        filtrados.forEach(pet => {
-            const card = document.createElement('article');
-            card.className = 'animal-card';
-            
-            const dataExibicao = pet.data.split('-').reverse().join('/');
-            const fotoUrl = pet.foto || 'https://via.placeholder.com/800x1000?text=Sem+Foto';
+    // MENSAGEM DE ERRO: Nenhum amiguinho encontrado
+    if (resultadoFiltrado.length === 0) {
+        listaGrid.innerHTML = `<div class="mensagem-vazia">nenhum amiguinho encontrado 🐾</div>`;
+        return;
+    }
 
-            card.innerHTML = `
-                <div class="badge">${typeof pet.id === 'string' ? 'Destaque' : 'Novo'}</div>
-                <img src="${fotoUrl}" alt="Foto de ${pet.nome}">
-                <div class="card-content">
-                    <span class="tag-especie">${pet.categoria}</span>
-                    <h3>${pet.nome}</h3>
-                    <p>Cadastrado em: ${dataExibicao}</p>
-                    
-                    <button onclick="verDetalhes('${pet.nome}', '${pet.categoria}', '${dataExibicao}', '${pet.mensagem || ''}')" class="btn-secondary">Ver Detalhes</button>
-                    
-                    ${typeof pet.id === 'number' ? `
-                        <button onclick="removerPet(${pet.id})" class="btn-remover">Remover do Banco</button>
-                    ` : ''}
-                </div>
-            `;
-            listaGrid.appendChild(card);
-        });
-    } catch (e) { console.error("Erro ao atualizar lista:", e); }
+    // Criar os Cards
+    resultadoFiltrado.forEach(pet => {
+        const card = document.createElement('div');
+        card.className = 'animal-card';
+        card.innerHTML = `
+            <img src="${pet.foto || 'https://via.placeholder.com/400x450?text=Animal+Sem+Foto'}" alt="${pet.nome}">
+            <div class="card-content">
+                <h3>${pet.nome}</h3>
+                <p><strong>Espécie:</strong> ${pet.categoria}</p>
+                <p><strong>Data de Cadastro:</strong> ${pet.data}</p>
+                <button class="btn-secondary" style="margin-top:20px" onclick="verDetalhes('${pet.nome}', '${pet.categoria}', '${pet.data}', '${pet.descricao || ''}')">Ver Detalhes</button>
+                ${typeof pet.id === 'number' ? `<button class="btn-remover" onclick="removerPet(${pet.id})">Excluir Registro</button>` : ''}
+            </div>
+        `;
+        listaGrid.appendChild(card);
+    });
 }
 
-// --- CADASTRO DE NOVO PET (DATA AUTOMÁTICA + UPLOAD) ---
-formulario.addEventListener('submit', async (e) => {
+// --- LOGICA DE CADASTRO ---
+formulario.addEventListener('submit', (e) => {
     e.preventDefault();
+    const inputFoto = document.querySelector('#foto').files[0];
 
-    const inputFoto = document.querySelector('#foto-upload');
-    const arquivo = inputFoto.files[0];
-    const msgUsuario = document.querySelector('#custom-msg').value;
-
-    const processarEnvio = async (fotoBase64) => {
-        const hoje = new Date().toISOString().split('T')[0]; // Captura data atual automática
-        
+    const finalizarSalvamento = (base64String) => {
         const novoPet = {
             nome: document.querySelector('#nome').value,
             categoria: document.querySelector('#categoria').value,
-            data: hoje,
-            local: 'Aguardando lar',
-            foto: fotoBase64,
-            mensagem: msgUsuario
+            descricao: document.querySelector('#custom-msg').value,
+            data: new Date().toLocaleDateString('pt-BR'),
+            foto: base64String
         };
-        
-        await adicionarItem(novoPet); // Função vinda do db.js
+        adicionarItem(novoPet);
         formulario.reset();
         atualizarLista();
-        // Feedback visual: rolar para a galeria
+        // Rola a tela suavemente para a galeria
         document.querySelector('#adotar-ancora').scrollIntoView();
     };
 
-    if (arquivo) {
-        const leitor = new FileReader();
-        leitor.onloadend = () => processarEnvio(leitor.result);
-        leitor.readAsDataURL(arquivo);
+    if (inputFoto) {
+        const reader = new FileReader();
+        reader.onloadend = () => finalizarSalvamento(reader.result);
+        reader.readAsDataURL(inputFoto);
     } else {
-        processarEnvio(null);
+        finalizarSalvamento(null);
     }
 });
 
-// --- MODAL COM MENSAGEM DINÂMICA ---
-window.verDetalhes = (nome, especie, data, mensagem) => {
+// --- MODAL DE DETALHES ---
+window.verDetalhes = (nome, especie, data, msg) => {
     const modal = document.getElementById('modal-pet');
     const conteudo = document.getElementById('modal-conteudo');
-    
-    // Texto padrão caso o usuário não digite nada
-    const padrao = `Conheça o(a) ${nome}. Este amiguinho é um ${especie}. Registrado em nosso sistema com a data de cadastramento em: ${data}. Vamos dar um lar para ele?`;
-    
-    const textoFinal = mensagem.trim() !== "" ? mensagem : padrao;
+    const textoPadrao = `Este é o(a) ${nome}, um(a) ${especie} muito especial registrado em ${data}. Que tal dar um novo lar para este amiguinho?`;
 
     conteudo.innerHTML = `
-        <h2>🐾 ${nome}</h2>
-        <p>${textoFinal}</p>
+        <h2 style="color:var(--accent); margin-bottom:25px;">🐾 ${nome}</h2>
+        <p style="font-size: 1.2rem; line-height: 1.8;">${msg.trim() !== "" ? msg : textoPadrao}</p>
     `;
     modal.style.display = 'flex';
 };
 
-// --- FUNÇÕES DE FILTRO ---
+// --- REMOÇÃO E FILTROS ---
+window.removerPet = (id) => {
+    if(confirm("Tem certeza que deseja excluir este pet permanentemente do banco?")) {
+        deletarItem(id);
+        atualizarLista();
+    }
+};
+
 window.resetarFiltros = () => {
     inputBusca.value = '';
     filtroEspecie.value = 'Todos';
     atualizarLista();
 };
 
-window.removerPet = async (id) => {
-    if(confirm("Deseja mesmo excluir este amiguinho do banco de dados?")) {
-        await deletarItem(id); // Função vinda do db.js
-        atualizarLista();
-    }
-};
-
 inputBusca.addEventListener('input', atualizarLista);
 filtroEspecie.addEventListener('change', atualizarLista);
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', atualizarLista);
+// Inicializar lista ao carregar
+atualizarLista();

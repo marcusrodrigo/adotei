@@ -16,73 +16,81 @@
     <nav>
         <ul>
             <li><a href="#inicio">Início</a></li>
+            <li><a href="#cadastro-ancora">Cadastrar</a></li>
             <li><a href="#adotar-ancora">Adotar</a></li>
-            <li><a href="#">Login</a></li>
-            <li><a href="#">Cadastrar</a></li>
             <li><button id="btn-dark-toggle">🌙 Dark Mode</button></li>
         </ul>
     </nav>
 </header>
 
 <section class="hero" id="inicio">
-    <div class="hero-container-images">
-        <img src="IMG_2004.jpg" class="float-img p1" alt="Pet 1">
-        <img src="IMG_2005.jpg" class="float-img p2" alt="Pet 2">
-        <img src="IMG_2006.jpg" class="float-img p3" alt="Pet 3">
-        
-        <h2>Amor <br>Não Se <br>Compra.</h2>
-        
-        <img src="IMG_2007.jpg" class="float-img p4" alt="Pet 4">
-        <img src="IMG_2008.jpg" class="float-img p5" alt="Pet 5">
-        <img src="IMG_2009.jpg" class="float-img p6" alt="Pet 6">
+    <div class="hero-content">
+        <h2>Amor em cada patinha.</h2>
+        <p>Encontre seu novo melhor amigo no AdotaPet. Design moderno para uma causa nobre.</p>
     </div>
-    <p>Conectando patas ansiosas a corações abertos através de uma plataforma moderna, minimalista e direta.</p>
+    <div class="hero-container-images">
+        <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80" alt="Hero Image">
+    </div>
 </section>
 
-<main class="container">
-    <aside class="sidebar">
-        <div class="sidebar-content">
-            <h3>Cadastrar Pet</h3>
-            <form id="meuFormulario">
-                <label for="nome">Nome do Animal</label>
-                <input type="text" id="nome" placeholder="Ex: Tobias" required>
-                
-                <label for="categoria">Espécie</label>
-                <select id="categoria" required>
-                    <option value="Cão">Cão</option>
-                    <option value="Gato">Gato</option>
-                </select>
-
-                <label for="foto-upload">Foto (JPG/PNG até 15MB)</label>
-                <input type="file" id="foto-upload" accept=".jpg, .jpeg, .png" required>
-
+<main class="container-full">
+    <section class="section-block" id="cadastro-ancora">
+        <h3>Cadastrar Novo Pet</h3>
+        <form id="meuFormulario">
+            <div class="form-grid-extra">
+                <div class="field">
+                    <label for="nome">Nome do Pet</label>
+                    <input type="text" id="nome" placeholder="Ex: Rex" required>
+                </div>
+                <div class="field">
+                    <label for="categoria">Espécie</label>
+                    <select id="categoria" required>
+                        <option value="Cão">Cão</option>
+                        <option value="Gato">Gato</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="foto">Foto do Pet</label>
+                    <input type="file" id="foto" accept="image/*">
+                </div>
+            </div>
+            <div class="field">
                 <label for="custom-msg">Mensagem Personalizada (Opcional)</label>
-                <textarea id="custom-msg" rows="3" placeholder="Se deixar vazio, usaremos a mensagem padrão de adoção..."></textarea>
+                <textarea id="custom-msg" rows="4" placeholder="Conte a história deste pet ou algo que chame atenção para a adoção..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Salvar no Banco de Dados</button>
+        </form>
+    </section>
 
-                <button type="submit" class="btn-primary">Salvar no Sistema</button>
-            </form>
+    <hr class="divider-long">
 
-            <hr>
+    <section class="section-block" id="adotar-ancora">
+        <h3>Filtrar Galeria</h3>
+        <form id="formBusca" onsubmit="event.preventDefault();">
+            <div class="form-grid-extra">
+                <div class="field">
+                    <label for="inputBusca">Pesquisar por Nome</label>
+                    <input type="search" id="inputBusca" placeholder="Quem você está procurando? (Ex: Rex, Mimi...)">
+                </div>
+                <div class="field">
+                    <label for="filtroEspecie">Filtrar por Espécie</label>
+                    <select id="filtroEspecie">
+                        <option value="Todos">Todos os Animais</option>
+                        <option value="Cão">Apenas Cães</option>
+                        <option value="Gato">Apenas Gatos</option>
+                    </select>
+                </div>
+                <div class="field btn-align">
+                    <button type="button" class="btn-secondary" onclick="resetarFiltros()">Limpar Filtros</button>
+                </div>
+            </div>
+        </form>
+    </section>
 
-            <h3 id="adotar-ancora">Filtrar Galeria</h3>
-            <form id="formBusca" onsubmit="event.preventDefault();">
-                <label for="inputBusca">Pesquisar Nome</label>
-                <input type="search" id="inputBusca" placeholder="Ex: Rex, Mimi...">
-
-                <label for="filtroEspecie">Espécie</label>
-                <select id="filtroEspecie">
-                    <option value="Todos">Todos</option>
-                    <option value="Cão">Cão</option>
-                    <option value="Gato">Gato</option>
-                </select>
-                
-                <button type="button" class="btn-secondary" onclick="resetarFiltros()">Limpar Filtros</button>
-            </form>
-        </div>
-    </aside>
-
-    <section class="animal-grid" id="listaItens">
-        </section>
+    <section class="section-block">
+        <div class="animal-grid" id="listaItens">
+            </div>
+    </section>
 </main>
 
 <div id="modal-pet">
@@ -92,8 +100,6 @@
     </div>
 </div>
 
-<script src="db.js"></script>
 <script src="controller.js"></script>
-
 </body>
 </html>
