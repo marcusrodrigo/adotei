@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data: https://via.placeholder.com https://images.unsplash.com;">
     <title>AdotaPet | Design & Adoção</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -66,7 +67,7 @@
 
     <section class="section-block" id="adotar-ancora">
         <h3>Filtrar Galeria</h3>
-        <form id="formBusca" onsubmit="event.preventDefault();">
+        <form id="formBusca">
             <div class="form-grid-extra">
                 <div class="field">
                     <label for="inputBusca">Pesquisar por Nome</label>
@@ -81,7 +82,7 @@
                     </select>
                 </div>
                 <div class="field btn-align">
-                    <button type="button" class="btn-secondary" onclick="resetarFiltros()">Limpar Filtros</button>
+                    <button type="button" class="btn-secondary" id="btn-limpar-filtros">Limpar Filtros</button>
                 </div>
             </div>
         </form>
@@ -96,7 +97,7 @@
 <div id="modal-pet">
     <div class="modal-body">
         <div id="modal-conteudo"></div>
-        <button onclick="document.getElementById('modal-pet').style.display='none'" class="btn-primary">Fechar Detalhes</button>
+        <button id="btn-fechar-modal" class="btn-primary">Fechar Detalhes</button>
     </div>
 </div>
 
