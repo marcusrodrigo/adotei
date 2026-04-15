@@ -208,6 +208,7 @@ header nav a:hover { color: var(--accent); }
     height: 400px;
     aspect-ratio: 1 / 1;
     object-fit: cover;
+    object-position: top;
     transition: transform 0.8s ease;
 }
 
