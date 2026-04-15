@@ -3,266 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdotaPet - Sistema Completo</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <style>
-        /* --- 1. VARIÁVEIS TECH --- */
-        :root {
-            --primary: #6c5ce7;
-            --primary-light: #a29bfe;
-            --accent: #ff7675;
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --card-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
-            --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-
-        /* --- 2. CONFIGURAÇÕES GERAIS --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at top right, #fdfbfb 0%, #ebedee 100%);
-            color: #2d3436;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        /* --- 3. HEADER FLOATING --- */
-        header {
-            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            margin: 15px 5%;
-            padding: 1rem 2.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 8px 32px rgba(108, 92, 231, 0.2);
-            border-radius: 20px;
-            position: sticky;
-            top: 15px;
-            z-index: 1000;
-            backdrop-filter: blur(8px);
-        }
-
-        header h1 { font-size: 1.4rem; font-weight: 600; }
-        header ul { display: flex; list-style: none; gap: 25px; }
-        header a { color: white; text-decoration: none; font-size: 0.95rem; transition: var(--transition-smooth); display: inline-block; }
-        header a:hover { opacity: 0.8; }
-        header a:active { transform: scale(0.9); filter: brightness(1.2); }
-
-        /* --- 4. LAYOUT PRINCIPAL --- */
-        .container {
-            display: flex;
-            padding: 40px 5%;
-            gap: 30px;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        /* --- 5. SIDEBAR GLASSMORPHISM --- */
-        .sidebar {
-            flex: 1;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            padding: 30px;
-            border-radius: 24px;
-            height: fit-content;
-            box-shadow: var(--card-shadow);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-
-        .sidebar h3 { margin-bottom: 20px; color: var(--primary); font-size: 1.1rem; }
-        .sidebar label { font-size: 0.8rem; font-weight: 600; color: #636e72; display: block; margin-top: 10px; }
-
-        .sidebar input, .sidebar select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            border: 2px solid rgba(108, 92, 231, 0.1);
-            border-radius: 12px;
-            outline: none;
-            font-family: inherit;
-        }
-
-        /* --- 6. GRID E CARDS --- */
-        .animal-grid {
-            flex: 3;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .animal-card {
-            background: white;
-            border-radius: 28px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0,0,0,0.02);
-            transition: var(--transition-smooth);
-            position: relative;
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-        
-        .animal-card:hover { transform: translateY(-10px); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animal-card img { width: 100%; height: 200px; object-fit: cover; }
-        .card-content { padding: 25px; }
-        .card-content h3 { font-size: 1.2rem; margin-bottom: 8px; color: var(--primary); }
-
-        .badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: var(--accent);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            z-index: 10;
-        }
-
-        /* --- 7. BOTÕES --- */
-        .btn-primary, .btn-secondary {
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition-smooth);
-            border: none;
-            text-align: center;
-            text-decoration: none;
-            display: block;
-            width: 100%;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            padding: 14px;
-            border-radius: 15px;
-            margin-top: 15px;
-        }
-
-        .btn-primary:active, .btn-secondary:active { transform: scale(0.95); filter: contrast(1.2); }
-
-        .btn-secondary {
-            background: #f8f9ff;
-            color: var(--primary);
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid var(--primary);
-            margin-top: 15px;
-        }
-
-        /* --- 8. FEEDBACK VISUAL --- */
-        .secao-foco {
-            animation: flashHighlight 1.5s ease-out;
-            border-radius: 24px;
-        }
-
-        @keyframes flashHighlight {
-            0% { background-color: rgba(108, 92, 231, 0.2); box-shadow: 0 0 20px var(--primary-light); }
-            100% { background-color: transparent; box-shadow: none; }
-        }
-
-        /* --- 9. MODAL --- */
-        #modal-pet {
-            display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
-            background:rgba(0,0,0,0.6); z-index:2000; align-items:center; 
-            justify-content:center; backdrop-filter: blur(5px);
-        }
-
-        /* --- 10. ESTILO CAOS (NOVO) --- */
-        .caos-container {
-            background: #eee;
-            padding: 10px;
-            border-radius: 10px;
-            margin-top: 10px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 120px;
-        }
-        #btn-caos {
-            position: absolute;
-            width: auto;
-            padding: 5px 10px;
-            font-size: 12px;
-            background: var(--accent);
-            color: white;
-            border-radius: 5px;
-            cursor: crosshair;
-            transition: 0.1s;
-        }
-
-        @media screen and (max-width: 768px) {
-            header { margin: 0; border-radius: 0; width: 100%; top: 0; }
-            .container { flex-direction: column; padding: 20px; }
-        }
-    </style>
+    <title>AdotaPet | Design & Adoção</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header id="inicio">
+<header>
     <div class="logo">
-        <h1>🐾 AdotaPet</h1>
+        <h1>🐾 Adota<span>Pet</span></h1>
     </div>
     <nav>
         <ul>
             <li><a href="#inicio">Início</a></li>
             <li><a href="#adotar-ancora">Adotar</a></li>
-            <li><a href="#" onclick="alert('Área de Login em desenvolvimento!')">Login</a></li>
+            <li><a href="#">Login</a></li>
+            <li><a href="#">Cadastrar</a></li>
+            <li><button id="btn-dark-toggle">🌙 Dark Mode</button></li>
         </ul>
     </nav>
 </header>
 
+<section class="hero" id="inicio">
+    <div class="hero-container-images">
+        <img src="IMG_2004.jpg" class="float-img p1" alt="Pet 1">
+        <img src="IMG_2005.jpg" class="float-img p2" alt="Pet 2">
+        <img src="IMG_2006.jpg" class="float-img p3" alt="Pet 3">
+        
+        <h2>Amor <br>Não Se <br>Compra.</h2>
+        
+        <img src="IMG_2007.jpg" class="float-img p4" alt="Pet 4">
+        <img src="IMG_2008.jpg" class="float-img p5" alt="Pet 5">
+        <img src="IMG_2009.jpg" class="float-img p6" alt="Pet 6">
+    </div>
+    <p>Conectando patas ansiosas a corações abertos através de uma plataforma moderna, minimalista e direta.</p>
+</section>
+
 <main class="container">
     <aside class="sidebar">
-        <h3>Cadastrar Pet</h3>
-        <form id="meuFormulario">
-            <label for="nome">Nome</label>
-            <input type="text" id="nome" placeholder="Ex: Tobias" required>
-            
-            <label for="categoria">Espécie</label>
-            <select id="categoria" required>
-                <option value="Cão">Cão</option>
-                <option value="Gato">Gato</option>
-            </select>
+        <div class="sidebar-content">
+            <h3>Cadastrar Pet</h3>
+            <form id="meuFormulario">
+                <label for="nome">Nome do Animal</label>
+                <input type="text" id="nome" placeholder="Ex: Tobias" required>
+                
+                <label for="categoria">Espécie</label>
+                <select id="categoria" required>
+                    <option value="Cão">Cão</option>
+                    <option value="Gato">Gato</option>
+                </select>
 
-            <label>Data de Nascimento (Clique para aumentar o ano)</label>
-            <div class="caos-container" id="caos-area">
-                <p style="font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;" id="display-ano">1900</p>
-                <button type="button" id="btn-caos">CLIQUE AQUI</button>
-            </div>
-            <input type="hidden" id="data" value="1900-01-01">
+                <label for="foto-upload">Foto (JPG/PNG até 15MB)</label>
+                <input type="file" id="foto-upload" accept=".jpg, .jpeg, .png" required>
 
-            <button type="submit" class="btn-primary">Salvar no Banco</button>
-        </form>
+                <label for="custom-msg">Mensagem Personalizada (Opcional)</label>
+                <textarea id="custom-msg" rows="3" placeholder="Se deixar vazio, usaremos a mensagem padrão de adoção..."></textarea>
 
-        <hr style="margin: 25px 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+                <button type="submit" class="btn-primary">Salvar no Sistema</button>
+            </form>
 
-        <h3 id="adotar-ancora">Filtrar Busca</h3>
-        <form id="formBusca" onsubmit="event.preventDefault();">
-            <label for="inputBusca">Nome do Pet</label>
-            <input type="search" id="inputBusca" placeholder="Ex: Rex, Mimi...">
+            <hr>
 
-            <label for="filtroEspecie">Espécie</label>
-            <select id="filtroEspecie">
-                <option value="Todos">Todos</option>
-                <option value="Cão">Cão</option>
-                <option value="Gato">Gato</option>
-            </select>
-            
-            <button type="button" class="btn-secondary" onclick="resetarFiltros()">Limpar Filtros</button>
-        </form>
+            <h3 id="adotar-ancora">Filtrar Galeria</h3>
+            <form id="formBusca" onsubmit="event.preventDefault();">
+                <label for="inputBusca">Pesquisar Nome</label>
+                <input type="search" id="inputBusca" placeholder="Ex: Rex, Mimi...">
+
+                <label for="filtroEspecie">Espécie</label>
+                <select id="filtroEspecie">
+                    <option value="Todos">Todos</option>
+                    <option value="Cão">Cão</option>
+                    <option value="Gato">Gato</option>
+                </select>
+                
+                <button type="button" class="btn-secondary" onclick="resetarFiltros()">Limpar Filtros</button>
+            </form>
+        </div>
     </aside>
 
     <section class="animal-grid" id="listaItens">
@@ -270,9 +86,9 @@
 </main>
 
 <div id="modal-pet">
-    <div style="background:white; padding:40px; border-radius:24px; max-width:400px; width:90%; text-align:center;">
+    <div class="modal-body">
         <div id="modal-conteudo"></div>
-        <button onclick="document.getElementById('modal-pet').style.display='none'" class="btn-primary">Fechar</button>
+        <button onclick="document.getElementById('modal-pet').style.display='none'" class="btn-primary">Fechar Detalhes</button>
     </div>
 </div>
 

@@ -1,178 +1,156 @@
 /**
- * CONTROLLER.JS - Versão Final Unificada com UX do Caos
+ * CONTROLLER.JS - LOGICA COMPLETA
+ * Gerencia a renderização, filtros, upload de imagem e data automática.
  */
 
-// --- 1. SELETORES ---
 const listaGrid = document.querySelector('#listaItens');
 const formulario = document.querySelector('#meuFormulario');
 const inputBusca = document.querySelector('#inputBusca');
 const filtroEspecie = document.querySelector('#filtroEspecie');
 
-// Seletores do Caos
-const btnCaos = document.querySelector('#btn-caos');
-const displayAno = document.querySelector('#display-ano');
-const inputDataOculto = document.querySelector('#data');
-const areaCaos = document.querySelector('#caos-area');
-
-let anoAtual = 1900;
-
-// --- LÓGICA DO CAOS: O BOTÃO FUJÃO ---
-btnCaos.addEventListener('mouseover', () => {
-    const maxX = areaCaos.clientWidth - btnCaos.offsetWidth;
-    const maxY = areaCaos.clientHeight - btnCaos.offsetHeight;
-    
-    const newX = Math.random() * maxX;
-    const newY = Math.random() * maxY;
-    
-    btnCaos.style.left = `${newX}px`;
-    btnCaos.style.top = `${newY}px`;
+// --- CONTROLE DARK MODE ---
+const btnDark = document.getElementById('btn-dark-toggle');
+btnDark.addEventListener('click', () => {
+    document.body.classList.toggle('dark-theme');
+    btnDark.innerText = document.body.classList.contains('dark-theme') ? '☀️ Light Mode' : '🌙 Dark Mode';
 });
 
-btnCaos.addEventListener('click', () => {
-    anoAtual++;
-    if(anoAtual > 2026) anoAtual = 1900; // Reseta se passar do limite
-    displayAno.innerText = anoAtual;
-    inputDataOculto.value = `${anoAtual}-01-01`; // Atualiza o valor para o banco
-});
-
-// --- 2. DADOS ORIGINAIS ---
-const petsOriginais = [
+// --- DADOS ORIGINAIS CORRIGIDOS ---
+const petsFicticios = [
     { 
-        id: 'fixo1', 
-        nome: 'Rex', 
-        categoria: 'Cão', 
-        data: '2024-01-15', 
-        porte: 'Médio', 
-        idade: '2 anos', 
-        local: 'São Paulo - SP', 
-        foto: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80' 
+        id: 'f1', nome: 'Rex', categoria: 'Cão', data: '2024-03-10', 
+        foto: 'IMG_2004.jpg', mensagem: "" 
     },
     { 
-        id: 'fixo2', 
-        nome: 'Mimi', 
-        categoria: 'Gata', 
-        data: '2024-02-10', 
-        porte: 'Pequeno', 
-        idade: '1 ano', 
-        local: 'Rio de Janeiro - RJ', 
-        foto: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80' 
+        id: 'f2', nome: 'Mimi', categoria: 'Gato', data: '2024-04-15', 
+        foto: 'IMG_2008.jpg', mensagem: ""
     }
 ];
 
-// --- 3. RENDERIZAÇÃO E FILTRO ---
+// --- FUNÇÃO DE RENDERIZAÇÃO ---
 async function atualizarLista() {
     try {
-        const itensBanco = await buscarItens(); 
-        const todosOsPets = [...petsOriginais, ...itensBanco];
+        const itensDB = await buscarItens(); // Função vinda do db.js
+        const todosOsPets = [...petsFicticios, ...itensDB];
         
-        const nomeBuscado = inputBusca.value.toLowerCase();
-        const especieSelecionada = filtroEspecie.value;
+        const busca = inputBusca.value.toLowerCase();
+        const especie = filtroEspecie.value;
 
         listaGrid.innerHTML = '';
 
-        const petsFiltrados = todosOsPets.filter(pet => {
-            const condicaoNome = pet.nome.toLowerCase().includes(nomeBuscado);
-            const condicaoEspecie = (especieSelecionada === "Todos") || (pet.categoria === especieSelecionada);
-            return condicaoNome && condicaoEspecie;
+        const filtrados = todosOsPets.filter(pet => {
+            const matchNome = pet.nome.toLowerCase().includes(busca);
+            const matchEspecie = (especie === "Todos") || (pet.categoria === especie);
+            return matchNome && matchEspecie;
         });
 
-        if (petsFiltrados.length === 0) {
-            listaGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #636e72;"><p>🐾 Nenhum amiguinho encontrado.</p></div>`;
+        // Caso a busca esteja vazia
+        if (filtrados.length === 0) {
+            listaGrid.innerHTML = `
+                <div class="empty-results">
+                    <h2>🐾 Ninguém <br>Por Aqui <br>Ainda.</h2>
+                    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Zic3B0Ynl0NXh4Ym4yc3R4M3V4M3V4M3V4M3V4M3V4M3V4M3V4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZContext&rid=giphy.gif" alt="Nada encontrado">
+                </div>`;
             return;
         }
 
-        petsFiltrados.forEach(pet => {
+        // Criar os Cards
+        filtrados.forEach(pet => {
             const card = document.createElement('article');
             card.className = 'animal-card';
             
             const dataExibicao = pet.data.split('-').reverse().join('/');
-            const fotoUrl = pet.foto || (pet.categoria === 'Gato' 
-                ? 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80' 
-                : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80');
+            const fotoUrl = pet.foto || 'https://via.placeholder.com/800x1000?text=Sem+Foto';
 
             card.innerHTML = `
                 <div class="badge">${typeof pet.id === 'string' ? 'Destaque' : 'Novo'}</div>
                 <img src="${fotoUrl}" alt="Foto de ${pet.nome}">
                 <div class="card-content">
-                    <h3>${pet.nome} (${pet.categoria})</h3>
-                    <p><strong>Resgate/Nasc:</strong> ${dataExibicao}</p>
-                    <p>📍 ${pet.local || 'Disponível'}</p>
+                    <span class="tag-especie">${pet.categoria}</span>
+                    <h3>${pet.nome}</h3>
+                    <p>Cadastrado em: ${dataExibicao}</p>
                     
-                    <button onclick="verDetalhes('${pet.nome}', '${pet.categoria}', '${dataExibicao}')" class="btn-secondary">Ver Detalhes</button>
+                    <button onclick="verDetalhes('${pet.nome}', '${pet.categoria}', '${dataExibicao}', '${pet.mensagem || ''}')" class="btn-secondary">Ver Detalhes</button>
                     
                     ${typeof pet.id === 'number' ? `
-                        <button onclick="removerPet(${pet.id})" style="background:#ff7675; color:white; border:none; padding:10px; border-radius:12px; margin-top:10px; width:100%; cursor:pointer; font-weight:600;">Remover</button>
+                        <button onclick="removerPet(${pet.id})" class="btn-remover">Remover do Banco</button>
                     ` : ''}
                 </div>
             `;
             listaGrid.appendChild(card);
         });
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Erro ao atualizar lista:", e); }
 }
 
-// --- 4. HANDLERS DE EVENTOS ---
+// --- CADASTRO DE NOVO PET (DATA AUTOMÁTICA + UPLOAD) ---
+formulario.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-inputBusca.addEventListener('input', atualizarLista);
-filtroEspecie.addEventListener('change', atualizarLista);
+    const inputFoto = document.querySelector('#foto-upload');
+    const arquivo = inputFoto.files[0];
+    const msgUsuario = document.querySelector('#custom-msg').value;
 
+    const processarEnvio = async (fotoBase64) => {
+        const hoje = new Date().toISOString().split('T')[0]; // Captura data atual automática
+        
+        const novoPet = {
+            nome: document.querySelector('#nome').value,
+            categoria: document.querySelector('#categoria').value,
+            data: hoje,
+            local: 'Aguardando lar',
+            foto: fotoBase64,
+            mensagem: msgUsuario
+        };
+        
+        await adicionarItem(novoPet); // Função vinda do db.js
+        formulario.reset();
+        atualizarLista();
+        // Feedback visual: rolar para a galeria
+        document.querySelector('#adotar-ancora').scrollIntoView();
+    };
+
+    if (arquivo) {
+        const leitor = new FileReader();
+        leitor.onloadend = () => processarEnvio(leitor.result);
+        leitor.readAsDataURL(arquivo);
+    } else {
+        processarEnvio(null);
+    }
+});
+
+// --- MODAL COM MENSAGEM DINÂMICA ---
+window.verDetalhes = (nome, especie, data, mensagem) => {
+    const modal = document.getElementById('modal-pet');
+    const conteudo = document.getElementById('modal-conteudo');
+    
+    // Texto padrão caso o usuário não digite nada
+    const padrao = `Conheça o(a) ${nome}. Este amiguinho é um ${especie}. Registrado em nosso sistema com a data de cadastramento em: ${data}. Vamos dar um lar para ele?`;
+    
+    const textoFinal = mensagem.trim() !== "" ? mensagem : padrao;
+
+    conteudo.innerHTML = `
+        <h2>🐾 ${nome}</h2>
+        <p>${textoFinal}</p>
+    `;
+    modal.style.display = 'flex';
+};
+
+// --- FUNÇÕES DE FILTRO ---
 window.resetarFiltros = () => {
     inputBusca.value = '';
     filtroEspecie.value = 'Todos';
     atualizarLista();
 };
 
-formulario.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const novoPet = {
-        nome: document.querySelector('#nome').value,
-        categoria: document.querySelector('#categoria').value,
-        data: document.querySelector('#data').value,
-        local: 'Aguardando lar',
-        idade: 'N/A'
-    };
-    await adicionarItem(novoPet);
-    
-    // Reseta o formulário e o Caos
-    formulario.reset();
-    anoAtual = 1900;
-    displayAno.innerText = "1900";
-    inputDataOculto.value = "1900-01-01";
-    
-    atualizarLista();
-});
-
 window.removerPet = async (id) => {
-    if(confirm("Deseja remover este registro?")) {
-        await deletarItem(id);
+    if(confirm("Deseja mesmo excluir este amiguinho do banco de dados?")) {
+        await deletarItem(id); // Função vinda do db.js
         atualizarLista();
     }
 };
 
-// --- MODAL COM MENSAGEM RESTAURADA ---
-window.verDetalhes = (nome, especie, data) => {
-    const modal = document.getElementById('modal-pet');
-    const conteudo = document.getElementById('modal-conteudo');
-    conteudo.innerHTML = `
-        <h2 style="color:var(--primary); margin-bottom:15px;">🐾 Conheça o(a) ${nome}</h2>
-        <p>Este amiguinho é um <strong>${especie}</strong>.</p>
-        <p style="margin: 15px 0;">Registrado em nosso sistema com a data de resgate ou nascimento em: <strong>${data}</strong>.</p>
-        <p>Vamos dar um lar para ele?</p>
-    `;
-    modal.style.display = 'flex';
-};
+inputBusca.addEventListener('input', atualizarLista);
+filtroEspecie.addEventListener('change', atualizarLista);
 
-// Efeito de flash no menu
-document.querySelectorAll('header a').forEach(link => {
-    link.addEventListener('click', function() {
-        const href = this.getAttribute('href');
-        if (href && href.startsWith('#')) {
-            const secao = document.querySelector(href);
-            if (secao) {
-                secao.classList.add('secao-foco');
-                setTimeout(() => secao.classList.remove('secao-foco'), 1500);
-            }
-        }
-    });
-});
-
-document.addEventListener('DOMContentLoaded', () => atualizarLista());
+// Inicialização
+document.addEventListener('DOMContentLoaded', atualizarLista);
