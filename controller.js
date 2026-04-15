@@ -82,16 +82,61 @@ async function atualizarLista() {
     } catch (e) { console.error("Erro ao atualizar lista:", e); }
 }
 
-// --- CADASTRO DE NOVO PET (DATA AUTOMÁTICA + UPLOAD) ---
+// --- VALIDACAO CUSTOMIZADA: TIPO E TAMANHO DE ARQUIVO ---
+window.Parsley.addValidator('filesize', {
+    validateString: function(_value, maxSizeKb, parsleyInstance) {
+        var files = parsleyInstance.$element[0].files;
+        if (files.length === 0) return true;
+        return files[0].size <= maxSizeKb * 1024;
+    },
+    requirementType: 'integer',
+    messages: {
+        'pt-br': 'O arquivo deve ter no m\u00e1ximo %s KB.',
+        en: 'File must be less than %s KB.'
+    }
+});
+
+window.Parsley.addValidator('filetype', {
+    validateString: function(_value, allowedTypes, parsleyInstance) {
+        var files = parsleyInstance.$element[0].files;
+        if (files.length === 0) return true;
+        var allowedList = allowedTypes.split(',').map(function(t) { return t.trim().toLowerCase(); });
+        var fileName = files[0].name.toLowerCase();
+        var ext = '.' + fileName.split('.').pop();
+        return allowedList.indexOf(ext) !== -1;
+    },
+    requirementType: 'string',
+    messages: {
+        'pt-br': 'Tipo de arquivo inv\u00e1lido. Tipos permitidos: %s',
+        en: 'Invalid file type. Allowed types: %s'
+    }
+});
+
+// --- INICIALIZAR PARSLEY NO FORMULARIO DE CADASTRO ---
+var $formCadastro = $('#meuFormulario').parsley();
+
+// Adicionar atributos de validacao de arquivo via JS (Parsley custom validators)
+$('#foto-upload').attr('data-parsley-filesize', '15360');
+$('#foto-upload').attr('data-parsley-filetype', '.jpg,.jpeg,.png');
+$('#foto-upload').attr('data-parsley-filetype-message', 'Envie apenas imagens JPG ou PNG.');
+$('#foto-upload').attr('data-parsley-filesize-message', 'A foto deve ter no m\u00e1ximo 15MB.');
+
+// --- CADASTRO DE NOVO PET (DATA AUTOM\u00c1TICA + UPLOAD + VALIDA\u00c7\u00c3O) ---
 formulario.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // Validar com Parsley antes de prosseguir
+    if (!$formCadastro.isValid()) {
+        $formCadastro.validate();
+        return;
+    }
 
     const inputFoto = document.querySelector('#foto-upload');
     const arquivo = inputFoto.files[0];
     const msgUsuario = document.querySelector('#custom-msg').value;
 
     const processarEnvio = async (fotoBase64) => {
-        const hoje = new Date().toISOString().split('T')[0]; // Captura data atual automática
+        const hoje = new Date().toISOString().split('T')[0]; // Captura data atual autom\u00e1tica
         
         const novoPet = {
             nome: document.querySelector('#nome').value,
@@ -102,8 +147,10 @@ formulario.addEventListener('submit', async (e) => {
             mensagem: msgUsuario
         };
         
-        await adicionarItem(novoPet); // Função vinda do db.js
+        await adicionarItem(novoPet); // Fun\u00e7\u00e3o vinda do db.js
         formulario.reset();
+        // Resetar estado de validacao apos envio bem-sucedido
+        $formCadastro.reset();
         atualizarLista();
         // Feedback visual: rolar para a galeria
         document.querySelector('#adotar-ancora').scrollIntoView();

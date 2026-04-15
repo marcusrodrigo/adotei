@@ -1,0 +1,77 @@
+/* ==========================================================================
+   PARSLEY.JS - ESTILOS DE VALIDACAO
+   ========================================================================== */
+
+/* Lista de erros do Parsley */
+.parsley-errors-list {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0 0 0;
+}
+
+.parsley-errors-list li {
+    color: #e74c3c;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: 4px;
+    padding: 6px 10px;
+    background-color: #ffeaea;
+    border-left: 3px solid #e74c3c;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Campo com erro */
+input.parsley-error,
+select.parsley-error,
+textarea.parsley-error {
+    border: 2px solid #e74c3c !important;
+    background-color: #fff5f5 !important;
+}
+
+/* Campo validado com sucesso */
+input.parsley-success,
+select.parsley-success,
+textarea.parsley-success {
+    border: 2px solid #27ae60 !important;
+}
+
+/* Adaptacoes para o dark theme */
+body.dark-theme .parsley-errors-list li {
+    background-color: #3b1a1a;
+    color: #ff6b6b;
+    border-left-color: #ff6b6b;
+}
+
+body.dark-theme input.parsley-error,
+body.dark-theme select.parsley-error,
+body.dark-theme textarea.parsley-error {
+    border-color: #ff6b6b !important;
+    background-color: #1a1010 !important;
+}
+
+body.dark-theme input.parsley-success,
+body.dark-theme select.parsley-success,
+body.dark-theme textarea.parsley-success {
+    border-color: #2ecc71 !important;
+}
+
+/* Estilo para o container de erros de checkbox/radio */
+#interesse-errors .parsley-errors-list {
+    margin-top: 8px;
+}
+
+/* Animacao sutil ao aparecer erro */
+.parsley-errors-list li {
+    animation: slideInError 0.3s ease-out;
+}
+
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
