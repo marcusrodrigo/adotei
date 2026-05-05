@@ -1,12 +1,12 @@
 <?php
 class Middleware {
     public static function validarCampos($post) {
-        if (empty($post['nome']) || empty($post['idade']) || empty($post['curso'])) {
-            die("⚠️ Erro: Todos os campos são obrigatórios!");
+        if (empty($post['nome']) || empty($post['idade'])) {
+            die("Campos obrigatórios faltando.");
         }
-        if (!is_numeric($post['idade'])) {
-            die("⚠️ Erro: A idade deve ser um número válido!");
-        }
-        return true;
+    }
+
+    public static function sanitizar($dados) {
+        return array_map(fn($v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8'), $dados);
     }
 }

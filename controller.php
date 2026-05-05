@@ -1,22 +1,16 @@
 <?php
-require_once 'model.php';
-require_once 'service.php';
+class PetController {
+    private $service;
 
-class MatriculaController {
-    public function processarMatricula($dados) {
+    public function __construct($service) {
+        $this->service = $service;
+    }
+
+    public function handlePost($dados) {
         try {
-            $service = new MatriculaService();
-            $dadosProcessados = $service->validarMatricula($dados);
-
-            $aluno = new AlunoModel();
-            $aluno->setNome($dadosProcessados['nome']);
-            $aluno->setIdade($dadosProcessados['idade']);
-            $aluno->setCurso($dadosProcessados['curso']);
-            
-            if ($aluno->save()) {
-                return ["sucesso" => true, "msg" => "Sucesso: " . $dadosProcessados['mensagem']];
-            }
-        } catch (Exception $e) {
+            $this->service->registrar($dados);
+            return ["sucesso" => true, "msg" => "Cadastro realizado com sucesso!"];
+        } catch (BusinessRuleException $e) {
             return ["sucesso" => false, "msg" => $e->getMessage()];
         }
     }
