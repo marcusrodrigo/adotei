@@ -1,0 +1,79 @@
+// === DIAGRAMA ENTIDADE-RELACIONAMENTO: ADOTAPET ===
+
+enum perfil_usuario {
+  comum
+  ong_protetor
+}
+
+enum status_solicitacao {
+  pendente
+  em_analise
+  aprovado
+  rejeitado
+  concluido
+}
+
+enum especie_animal {
+  cao
+  gato
+  outros
+}
+
+enum porte_animal {
+  pequeno
+  medio
+  grande
+}
+
+Table usuarios {
+  id integer [primary key, increment]
+  nome varchar(255) [not null]
+  email varchar(255) [unique, not null]
+  senha varchar(255) [not null] // Armazenará hash seguro (RNF01)
+  perfil perfil_usuario [not null, default: 'comum']
+  homologado boolean [not null, default: false] // Define se exibe selo "Não Verificado" (RF01)
+  cpf varchar(14) [unique, null] // Dado sensível (RN01)
+  telefone varchar(20) [null]    // Dado sensível (RN01)
+  criado_em timestamp [default: `now()` ]
+}
+
+Table animais {
+  id integer [primary key, increment]
+  usuario_id integer [not null] // Criador do anúncio (ONG ou Usuário Comum)
+  nome varchar(100) [not null]
+  especie especie_animal [not null]
+  porte porte_animal [not null]
+  idade_estimada varchar(50) [not null]
+  localizacao_cidade varchar(100) [not null]
+  localizacao_estado varchar(2) [not null]
+  descricao text [not null]
+  foto_url varchar(255) [not null] // Garante o critério de aceite do RF01 (pelo menos uma imagem)
+  status_ativo boolean [not null, default: true] // RN02 (Inativo após 60 dias sem ação)
+  atualizado_em timestamp [default: `now()` ]
+  criado_em timestamp [default: `now()` ]
+}
+
+Table solicitacoes {
+  id integer [primary key, increment]
+  animal_id integer [not null]
+  adotante_id integer [not null] // Vincula o usuário logado que tem interesse (RF02)
+  motivacao text [not null] // Exigido no formulário do RF02
+  status status_solicitacao [not null, default: 'pendente'] // Estados lógicos do RF03
+  criado_em timestamp [default: `now()` ]
+  
+  // RN03 e RF02: impede duplicidade de interesse do mesmo adotante para o mesmo animal
+  Indexes {
+    (animal_id, adotante_id) [unique]
+  }
+}
+
+// === ESTABELECENDO OS VÍNCULOS (RELACIONAMENTOS) ===
+
+// Um para Muitos: Um usuário (protetor/comum) pode cadastrar vários animais
+Ref: animais.usuario_id > usuarios.id [delete: cascade]
+
+// Um para Muitos: Um animal pode receber várias solicitações de adoção (até ser Concluído)
+Ref: solicitacoes.animal_id > animais.id [delete: cascade]
+
+// Um para Muitos: Um usuário logado pode fazer solicitações para diferentes animais
+Ref: solicitacoes.adotante_id > usuarios.id [delete: cascade]
