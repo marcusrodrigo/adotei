@@ -83,9 +83,55 @@ function atualizarLista() {
     });
 }
 
-// --- LOGICA DE CADASTRO ---
+// --- VALIDACAO CUSTOMIZADA: TIPO E TAMANHO DE ARQUIVO ---
+window.Parsley.addValidator('filesize', {
+    validateString: function(_value, maxSizeKb, parsleyInstance) {
+        var files = parsleyInstance.$element[0].files;
+        if (files.length === 0) return true;
+        return files[0].size <= maxSizeKb * 1024;
+    },
+    requirementType: 'integer',
+    messages: {
+        'pt-br': 'O arquivo deve ter no máximo %s KB.',
+        en: 'File must be less than %s KB.'
+    }
+});
+
+window.Parsley.addValidator('filetype', {
+    validateString: function(_value, allowedTypes, parsleyInstance) {
+        var files = parsleyInstance.$element[0].files;
+        if (files.length === 0) return true;
+        var allowedList = allowedTypes.split(',').map(function(t) { return t.trim().toLowerCase(); });
+        var fileName = files[0].name.toLowerCase();
+        var ext = '.' + fileName.split('.').pop();
+        return allowedList.indexOf(ext) !== -1;
+    },
+    requirementType: 'string',
+    messages: {
+        'pt-br': 'Tipo de arquivo inválido. Tipos permitidos: %s',
+        en: 'Invalid file type. Allowed types: %s'
+    }
+});
+
+// --- INICIALIZAR PARSLEY NO FORMULARIO DE CADASTRO ---
+var $formCadastro = $('#meuFormulario').parsley();
+
+// Adicionar atributos de validacao de arquivo via JS (Parsley custom validators)
+$('#foto').attr('data-parsley-filesize', '15360');
+$('#foto').attr('data-parsley-filetype', '.jpg,.jpeg,.png,.gif,.webp');
+$('#foto').attr('data-parsley-filetype-message', 'Envie apenas imagens (JPG, PNG, GIF ou WebP).');
+$('#foto').attr('data-parsley-filesize-message', 'A foto deve ter no máximo 15MB.');
+
+// --- LOGICA DE CADASTRO (COM VALIDACAO PARSLEY) ---
 formulario.addEventListener('submit', (e) => {
     e.preventDefault();
+
+    // Validar com Parsley antes de prosseguir
+    if (!$formCadastro.isValid()) {
+        $formCadastro.validate();
+        return;
+    }
+
     const inputFoto = document.querySelector('#foto').files[0];
 
     const finalizarSalvamento = (base64String) => {
@@ -98,6 +144,8 @@ formulario.addEventListener('submit', (e) => {
         };
         adicionarItem(novoPet);
         formulario.reset();
+        // Resetar estado de validacao apos envio bem-sucedido
+        $formCadastro.reset();
         atualizarLista();
         // Rola a tela suavemente para a galeria
         document.querySelector('#adotar-ancora').scrollIntoView();

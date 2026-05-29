@@ -4,35 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscrição - 1º Hackathon de Informática</title>
+    <link rel="stylesheet" href="validation.css">
 </head>
 <body>
 
     <h1>Inscrição: 1º Hackathon de Informática da Escola</h1>
     <p>Preencha os campos abaixo para garantir sua vaga no evento.</p>
 
-    <form action="#" method="POST" enctype="multipart/form-data">
+    <form action="#" method="POST" enctype="multipart/form-data" id="formInscricao" data-parsley-validate>
 
         <fieldset>
             <legend>Dados Pessoais</legend>
             
             <p>
                 <label for="nome">Nome Completo:</label><br>
-                <input type="text" id="nome" name="nome" required>
+                <input type="text" id="nome" name="nome" required
+                    data-parsley-required-message="O nome completo é obrigatório."
+                    data-parsley-minlength="3"
+                    data-parsley-minlength-message="O nome deve ter pelo menos 3 caracteres."
+                    data-parsley-pattern="^[A-Za-zÀ-ÿ\s]+$"
+                    data-parsley-pattern-message="O nome deve conter apenas letras.">
             </p>
 
             <p>
                 <label for="email">E-mail:</label><br>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" required
+                    data-parsley-required-message="O e-mail é obrigatório."
+                    data-parsley-type-message="Informe um e-mail válido (ex: nome@email.com).">
             </p>
 
             <p>
                 <label for="senha">Senha para o sistema:</label><br>
-                <input type="password" id="senha" name="senha" required>
+                <input type="password" id="senha" name="senha" required
+                    data-parsley-required-message="A senha é obrigatória."
+                    data-parsley-minlength="6"
+                    data-parsley-minlength-message="A senha deve ter pelo menos 6 caracteres.">
             </p>
 
             <p>
                 <label for="nascimento">Data de Nascimento:</label><br>
-                <input type="date" id="nascimento" name="nascimento" required>
+                <input type="date" id="nascimento" name="nascimento" required
+                    data-parsley-required-message="A data de nascimento é obrigatória.">
             </p>
         </fieldset>
 
@@ -42,7 +54,10 @@
             <legend>Perfil Técnico</legend>
 
             <p>Quais linguagens você tem interesse?</p>
-            <input type="checkbox" id="html" name="interesse" value="html">
+            <input type="checkbox" id="html" name="interesse" value="html"
+                data-parsley-mincheck="1"
+                data-parsley-mincheck-message="Selecione pelo menos uma linguagem de interesse."
+                data-parsley-errors-container="#interesse-errors">
             <label for="html">HTML</label><br>
             
             <input type="checkbox" id="css" name="interesse" value="css">
@@ -53,6 +68,7 @@
             
             <input type="checkbox" id="python" name="interesse" value="python">
             <label for="python">Python</label>
+            <div id="interesse-errors"></div>
 
             <p>Nível de experiência:</p>
             <input type="radio" id="iniciante" name="nivel" value="iniciante" checked>
@@ -87,7 +103,9 @@
 
             <p>
                 <label for="motivacao">Carta de Motivação (Por que você deseja participar?):</label><br>
-                <textarea id="motivacao" name="motivacao" rows="5" cols="40" placeholder="Conte-nos um pouco sobre suas expectativas..."></textarea>
+                <textarea id="motivacao" name="motivacao" rows="5" cols="40" placeholder="Conte-nos um pouco sobre suas expectativas..."
+                    data-parsley-minlength="20"
+                    data-parsley-minlength-message="Se preenchida, a motivação deve ter pelo menos 20 caracteres."></textarea>
             </p>
         </fieldset>
 
@@ -97,5 +115,21 @@
 
     </form>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/i18n/pt-br.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#formInscricao').parsley();
+
+            $('#formInscricao').on('submit', function(e) {
+                if ($(this).parsley().isValid()) {
+                    e.preventDefault();
+                    alert('Inscrição enviada com sucesso! Obrigado por se inscrever.');
+                    this.reset();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
