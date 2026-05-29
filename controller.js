@@ -2,6 +2,19 @@
  * CONTROLLER.JS - VERSÃO COMPLETA E INTEGRADA
  */
 
+// --- SEGURANÇA: Escape de HTML para prevenir XSS ---
+function escapeHTML(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+const MAX_UPLOAD_SIZE = 15 * 1024 * 1024; // 15 MB
+
 // --- BANCO DE DADOS LOCAL (LocalStorage) ---
 const buscarItens = () => JSON.parse(localStorage.getItem('adota_pet_master_db')) || [];
 
@@ -69,16 +82,38 @@ function atualizarLista() {
     resultadoFiltrado.forEach(pet => {
         const card = document.createElement('div');
         card.className = 'animal-card';
+
+        const safeNome = escapeHTML(pet.nome);
+        const safeCategoria = escapeHTML(pet.categoria);
+        const safeData = escapeHTML(pet.data);
+        const safeFoto = escapeHTML(pet.foto || 'https://via.placeholder.com/400x450?text=Animal+Sem+Foto');
+        const safeDescricao = escapeHTML(pet.descricao || '');
+
         card.innerHTML = `
-            <img src="${pet.foto || 'https://via.placeholder.com/400x450?text=Animal+Sem+Foto'}" alt="${pet.nome}">
+            <img src="${safeFoto}" alt="${safeNome}">
             <div class="card-content">
-                <h3>${pet.nome}</h3>
-                <p><strong>Espécie:</strong> ${pet.categoria}</p>
-                <p><strong>Data de Cadastro:</strong> ${pet.data}</p>
-                <button class="btn-secondary" style="margin-top:20px" onclick="verDetalhes('${pet.nome}', '${pet.categoria}', '${pet.data}', '${pet.descricao || ''}')">Ver Detalhes</button>
-                ${typeof pet.id === 'number' ? `<button class="btn-remover" onclick="removerPet(${pet.id})">Excluir Registro</button>` : ''}
+                <h3>${safeNome}</h3>
+                <p><strong>Espécie:</strong> ${safeCategoria}</p>
+                <p><strong>Data de Cadastro:</strong> ${safeData}</p>
+                <button class="btn-secondary btn-detalhes" style="margin-top:20px">Ver Detalhes</button>
+                ${typeof pet.id === 'number' ? `<button class="btn-remover">Excluir Registro</button>` : ''}
             </div>
         `;
+
+        // Event listeners seguros em vez de inline onclick
+        const btnDetalhes = card.querySelector('.btn-detalhes');
+        if (btnDetalhes) {
+            btnDetalhes.addEventListener('click', () => {
+                verDetalhes(pet.nome, pet.categoria, pet.data, pet.descricao || '');
+            });
+        }
+        const btnRemover = card.querySelector('.btn-remover');
+        if (btnRemover) {
+            btnRemover.addEventListener('click', () => {
+                removerPet(pet.id);
+            });
+        }
+
         listaGrid.appendChild(card);
     });
 }
@@ -104,6 +139,10 @@ formulario.addEventListener('submit', (e) => {
     };
 
     if (inputFoto) {
+        if (inputFoto.size > MAX_UPLOAD_SIZE) {
+            alert('O arquivo excede o limite de 15 MB. Por favor, escolha um arquivo menor.');
+            return;
+        }
         const reader = new FileReader();
         reader.onloadend = () => finalizarSalvamento(reader.result);
         reader.readAsDataURL(inputFoto);
@@ -116,11 +155,17 @@ formulario.addEventListener('submit', (e) => {
 window.verDetalhes = (nome, especie, data, msg) => {
     const modal = document.getElementById('modal-pet');
     const conteudo = document.getElementById('modal-conteudo');
-    const textoPadrao = `Este é o(a) ${nome}, um(a) ${especie} muito especial registrado em ${data}. Que tal dar um novo lar para este amiguinho?`;
+
+    const safeNome = escapeHTML(nome);
+    const safeEspecie = escapeHTML(especie);
+    const safeData = escapeHTML(data);
+    const safeMsg = escapeHTML(msg);
+
+    const textoPadrao = `Este é o(a) ${safeNome}, um(a) ${safeEspecie} muito especial registrado em ${safeData}. Que tal dar um novo lar para este amiguinho?`;
 
     conteudo.innerHTML = `
-        <h2 style="color:var(--accent); margin-bottom:25px;">🐾 ${nome}</h2>
-        <p style="font-size: 1.2rem; line-height: 1.8;">${msg.trim() !== "" ? msg : textoPadrao}</p>
+        <h2 style="color:var(--accent); margin-bottom:25px;">🐾 ${safeNome}</h2>
+        <p style="font-size: 1.2rem; line-height: 1.8;">${safeMsg.trim() !== "" ? safeMsg : textoPadrao}</p>
     `;
     modal.style.display = 'flex';
 };
@@ -133,6 +178,20 @@ window.removerPet = (id) => {
     }
 };
 
+const formBusca = document.querySelector('#formBusca');
+if (formBusca) {
+    formBusca.addEventListener('submit', (e) => e.preventDefault());
+}
+
+const btnLimparFiltros = document.getElementById('btn-limpar-filtros');
+if (btnLimparFiltros) {
+    btnLimparFiltros.addEventListener('click', () => {
+        inputBusca.value = '';
+        filtroEspecie.value = 'Todos';
+        atualizarLista();
+    });
+}
+
 window.resetarFiltros = () => {
     inputBusca.value = '';
     filtroEspecie.value = 'Todos';
@@ -141,6 +200,14 @@ window.resetarFiltros = () => {
 
 inputBusca.addEventListener('input', atualizarLista);
 filtroEspecie.addEventListener('change', atualizarLista);
+
+// --- FECHAR MODAL (sem inline onclick) ---
+const btnFecharModal = document.getElementById('btn-fechar-modal');
+if (btnFecharModal) {
+    btnFecharModal.addEventListener('click', () => {
+        document.getElementById('modal-pet').style.display = 'none';
+    });
+}
 
 // Inicializar lista ao carregar
 atualizarLista();
