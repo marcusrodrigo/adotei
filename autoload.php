@@ -1,55 +1,25 @@
 <?php
 /**
- * autoload.php
- * Registra o autoloader PSR-4 simplificado.
- * Mapeia namespaces/classes para seus arquivos automaticamente.
- *
- * Convenção de mapeamento:
- *   PetController      → app/controller/PetController.php
- *   PetRepository      → app/model/PetRepository.php
- *   PetService         → app/services/PetService.php
- *   AuthMiddleware     → app/middleware/AuthMiddleware.php
- *   BusinessRuleException → app/services/BusinessRuleException.php
+ * autoload.php — PSR-4 simples para o namespace "App".
+ * Mapeia  App\Foo\Bar  →  app/Foo/Bar.php
+ * Localização: raiz do projeto.
  */
 
-spl_autoload_register(function (string $className): void {
+spl_autoload_register(function (string $class): void {
+    // Prefixo e diretório-base
+    $prefix   = 'App\\';
+    $base_dir = __DIR__ . '/app/';
 
-    // Mapa de prefixos de classe para diretórios
-    $classMap = [
-        'Controller'  => __DIR__ . '/app/controller/',
-        'Repository'  => __DIR__ . '/app/model/',
-        'Service'     => __DIR__ . '/app/services/',
-        'Exception'   => __DIR__ . '/app/services/',
-        'Middleware'  => __DIR__ . '/app/middleware/',
-        'Migration'   => __DIR__ . '/app/migration/',
-    ];
-
-    // Verificar cada sufixo mapeado
-    foreach ($classMap as $suffix => $directory) {
-        if (str_ends_with($className, $suffix)) {
-            $filePath = $directory . $className . '.php';
-            if (file_exists($filePath)) {
-                require_once $filePath;
-                return;
-            }
-        }
+    // Se a classe não pertence ao namespace "App", ignora
+    if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
+        return;
     }
 
-    // Fallback: tentar carregar de qualquer subpasta do app/
-    $appDirs = [
-        __DIR__ . '/app/controller/',
-        __DIR__ . '/app/model/',
-        __DIR__ . '/app/services/',
-        __DIR__ . '/app/middleware/',
-        __DIR__ . '/app/migration/',
-        __DIR__ . '/app/router/',
-    ];
+    // Remove o prefixo e monta o caminho do arquivo
+    $relative = substr($class, strlen($prefix));           // ex: "model\Relato"
+    $file     = $base_dir . str_replace('\\', '/', $relative) . '.php';
 
-    foreach ($appDirs as $dir) {
-        $filePath = $dir . $className . '.php';
-        if (file_exists($filePath)) {
-            require_once $filePath;
-            return;
-        }
+    if (file_exists($file)) {
+        require $file;
     }
 });

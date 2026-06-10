@@ -1,58 +1,71 @@
 <?php
 /**
- * Database.php
- * Classe Singleton responsável EXCLUSIVAMENTE por:
- * - Ler o config.php
- * - Retornar a instância PDO (uma única conexão reutilizada)
- *
- * NENHUM outro arquivo deve saber como conectar ao banco.
+ * Database.php — Wrapper PDO (SQLite).
+ * Namespace : App\config
+ * Localização: app/config/Database.php
  */
+
+namespace App\config;
+
+use PDO;
+use PDOException;
 
 class Database
 {
     private static ?PDO $instance = null;
 
-    // Construtor e clone privados: ninguém pode instanciar externamente
-    private function __construct() {}
-    private function __clone() {}
-
-    /**
-     * Retorna a instância única do PDO.
-     * Se ainda não existir, cria a conexão.
-     */
-    public static function getInstance(): PDO
+    /** Retorna a conexão singleton com o banco. */
+    public static function getConnection(): PDO
     {
         if (self::$instance === null) {
-            self::$instance = self::createConnection();
+            self::$instance = self::connect();
         }
         return self::$instance;
     }
 
-    /**
-     * Cria e configura a conexão PDO com base no config.php
-     */
-    private static function createConnection(): PDO
+    private static function connect(): PDO
     {
-        if (!defined('DB_PATH') || !defined('DB_DRIVER')) {
-            throw new RuntimeException(
-                'Configuração do banco não encontrada. Verifique o config.php.'
-            );
+        if (DB_DRIVER !== 'sqlite') {
+            throw new \RuntimeException('Apenas SQLite é suportado nesta versão.');
         }
 
-        $dsn = DB_DRIVER . ':' . DB_PATH;
+        // Garante que o diretório do banco existe
+        $dir = dirname(DB_PATH);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
 
         try {
-            $pdo = new PDO($dsn);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = new PDO('sqlite:' . DB_PATH);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE,            PDO::ERRMODE_EXCEPTION);
             $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            // Habilita suporte a chaves estrangeiras no SQLite
-            $pdo->exec('PRAGMA foreign_keys = ON;');
-            return $pdo;
+            $pdo->exec('PRAGMA journal_mode=WAL;');
+            $pdo->exec('PRAGMA foreign_keys=ON;');
 
+            self::migrate($pdo);
+            return $pdo;
         } catch (PDOException $e) {
-            // Nunca expor detalhes técnicos ao usuário final
-            error_log('[Database] Falha na conexão: ' . $e->getMessage());
-            throw new RuntimeException('Falha ao conectar com o banco de dados.');
+            http_response_code(500);
+            die('Erro de conexão com o banco: ' . ($e->getMessage()));
         }
+    }
+
+    /**
+     * Cria a tabela "relatos" caso ainda não exista.
+     * Mantém o histórico de pets cadastrados via formulário.
+     */
+    private static function migrate(PDO $pdo): void
+    {
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS relatos (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome        TEXT    NOT NULL,
+                categoria   TEXT    NOT NULL,
+                descricao   TEXT,
+                foto        TEXT,
+                data        TEXT    NOT NULL,
+                criado_em   DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
     }
 }
