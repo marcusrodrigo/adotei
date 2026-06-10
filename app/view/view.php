@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdotaPet | Design &amp; Adoção</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <!-- CSS servido como arquivo estático pela pasta view -->
-    <link rel="stylesheet" href="view/style.css">
+    <link rel="stylesheet" href="/app/view/style.css">
 </head>
 <body>
 
@@ -52,11 +51,6 @@
     <!-- FORMULÁRIO DE CADASTRO -->
     <section class="section-block" id="cadastro-ancora">
         <h3>Cadastrar Novo Pet</h3>
-        <!--
-            O formulário envia para index.php (POST /).
-            A foto é convertida para base64 pelo controller.js antes do submit,
-            então usamos um hidden input para transportá-la.
-        -->
         <form id="meuFormulario" method="POST" action="index.php">
             <div class="form-grid-extra">
                 <div class="field">
@@ -73,7 +67,6 @@
                 <div class="field">
                     <label for="foto">Foto do Pet</label>
                     <input type="file" id="foto" accept="image/*">
-                    <!-- Input oculto que receberá o base64 da foto via JS -->
                     <input type="hidden" id="foto-base64" name="foto">
                 </div>
             </div>
@@ -129,11 +122,6 @@
     </div>
 </div>
 
-<!--
-    Injeta os pets do banco como variável JS global.
-    O controller.js os mescla com os pets fixos (Rex e Mimi)
-    e com o LocalStorage — sem quebrar nenhuma lógica existente.
--->
 <script>
     window.petsDoBanco = <?php
         $payload = array_map(function($r) {
@@ -144,15 +132,16 @@
                 'descricao' => $r->descricao ?? '',
                 'foto'      => $r->foto ?? '',
                 'data'      => $r->data,
-                'origem'    => 'banco', // distingue de LocalStorage
+                'origem'    => 'banco',
             ];
         }, $relatos ?? []);
         echo json_encode($payload, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
     ?>;
 </script>
 
-<script src="view/db.js"></script>
-<script src="view/controller.js"></script>
-<script src="view/script.js"></script>
+<script src="/app/view/db.js"></script>
+<script src="/app/view/controller.js"></script>
+<script src="/app/view/script.js"></script>
+
 </body>
 </html>
