@@ -11,7 +11,7 @@ spl_autoload_register(function (string $class): void {
     $base_dir = __DIR__ . '/app/';
 
     // Se a classe não pertence ao namespace "App", ignora
-    if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
+    if (strncmp($class, $prefix, strlen($prefix)) !== 0) {  // ✅ $class primeiro
         return;
     }
 
@@ -21,5 +21,12 @@ spl_autoload_register(function (string $class): void {
 
     if (file_exists($file)) {
         require $file;
+    } else {
+        // ✅ Lança erro explícito em vez de falhar silenciosamente
+        throw new \RuntimeException(
+            "Autoload: arquivo não encontrado para a classe \"$class\".\n" .
+            "Caminho esperado: $file\n" .
+            "Verifique se o nome do arquivo bate exatamente com o nome da classe (case-sensitive)."
+        );
     }
 });
